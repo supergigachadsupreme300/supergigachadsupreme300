@@ -112,6 +112,7 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
     if pattern: pattern(d, W, H)
     # eye (smaller, white sclera)
     ex, ey = int(W*0.78), int(H*0.38)
+    ell(d, ex-3, ey-3, ex+3, ey+3, (255,255,255,255), K, 1)
     ell(d, ex-1, ey-1, ex+1, ey+1, (20,20,24,255), None)
     # mouth
     line(d, int(W*0.92), int(H*0.5), int(W*0.95), int(H*0.52), K, 1)

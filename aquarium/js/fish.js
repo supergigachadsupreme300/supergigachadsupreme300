@@ -52,8 +52,9 @@ export class Fish {
     const img = (typeof getAsset === 'function') ? getAsset(assetKey, Math.floor(t * 4 + this.animPhase) % 2) : null;
     if (img) {
       const dir = this.vx >= 0 ? 1 : -1;
-      const w = img.width;
-      const h = img.height;
+      const scale = 0.5;
+      const w = img.width * scale;
+      const h = img.height * scale;
       ctx.save();
       ctx.translate(Math.round(this.x), Math.round(this.y));
       if (dir < 0) ctx.scale(-1, 1);

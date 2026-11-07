@@ -19,6 +19,14 @@ const { spawnSync } = require('child_process');
   await browser.close();
 
   const out = path.join(process.cwd(), 'aquarium', 'aquarium-preview.gif');
+  // Ensure ffmpeg exists
+  const which = spawnSync('which', ['ffmpeg'], { encoding: 'utf8' });
+  console.log('ffmpeg path:', which.stdout && which.stdout.trim());
+  if (which.status !== 0) {
+    console.error('ffmpeg not found on PATH');
+    process.exit(1);
+  }
+
   const r = spawnSync('ffmpeg', [
     '-y', '-framerate', '10',
     '-i', path.join(framesDir, 'frame-%03d.png'),
@@ -28,6 +36,10 @@ const { spawnSync } = require('child_process');
 
   fs.rmSync(framesDir, { recursive: true, force: true });
 
+  if (r.error) {
+    console.error('spawn error:', r.error);
+    process.exit(1);
+  }
   if (r.status !== 0) {
     console.error('ffmpeg failed with code', r.status);
     process.exit(1);

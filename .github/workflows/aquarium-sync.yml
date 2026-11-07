@@ -29,11 +29,18 @@ jobs:
           npx playwright install chromium --with-deps
 
       - name: Sync GitHub contributions
+        if: ${{ secrets.AQUARIUM_GITHUB_TOKEN != '' && secrets.AQUARIUM_GITHUB_USERNAME != '' }}
+        continue-on-error: true
         env:
           AQUARIUM_GITHUB_TOKEN: ${{ secrets.AQUARIUM_GITHUB_TOKEN }}
           AQUARIUM_GITHUB_USERNAME: ${{ secrets.AQUARIUM_GITHUB_USERNAME }}
         run: |
           node .github/scripts/aquarium-sync.js
+
+      - name: Skip sync (no secrets configured)
+        if: ${{ secrets.AQUARIUM_GITHUB_TOKEN == '' || secrets.AQUARIUM_GITHUB_USERNAME == '' }}
+        run: |
+          echo "Secrets not configured; using existing aquarium-state.json."
 
       - name: Start local server
         run: |
@@ -43,6 +50,13 @@ jobs:
             if curl -s http://localhost:8765/ >/dev/null; then echo "server ready"; break; fi
             sleep 1
           done
+
+      - name: Ensure ffmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          which ffmpeg
+          ffmpeg -version | head -1
 
       - name: Capture aquarium preview GIF
         run: |

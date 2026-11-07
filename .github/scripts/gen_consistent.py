@@ -230,10 +230,38 @@ def make_fish(name, tail_up=False):
     # species-specific eye spot for butterfly already in pattern
     return img
 
+# Turtle: special case (not a fish)
+def turtle(tail_up=False):
+    img = new(108, 68); d = ImageDraw.Draw(img)
+    G=(46,125,50,255); D=(27,94,32,255); L=(102,187,106,255); K=(18,18,24,255)
+    Y=(255,241,118,255)
+    # shell
+    smooth(d, 54, 34, 46, 26, G, K)
+    smooth(d, 54, 38, 40, 20, D, None)
+    smooth(d, 40, 22, 24, 14, L, None)
+    # scutes
+    for i in range(-3,4):
+        line(d, 54+i*9, 12, 54+i*9, 56, D, 1)
+    line(d, 14, 34, 94, 34, D, 1)
+    # head
+    smooth(d, 92, 34, 14, 10, L, K)
+    ell(d, 96, 30, 104, 38, (20,20,24,255), None)
+    ell(d, 97, 30, 101, 34, (255,255,255,255), None)
+    # flippers
+    poly(d, [(18,12),(6,4),(14,20)], L, K, 1)
+    poly(d, [(18,56),(6,64),(14,48)], L, K, 1)
+    poly(d, [(82,12),(92,4),(86,20)], L, K, 1)
+    poly(d, [(82,56),(92,64),(86,48)], L, K, 1)
+    return img
+
 # Run
 for name in SPECS:
-    for f in (0,1):
-        save(make_fish(name, tail_up=(f==1)), f"{name}_{f}.png")
+    if name == 'turtle':
+        save(turtle(False), "turtle_0.png")
+        save(turtle(True), "turtle_1.png")
+    else:
+        for f in (0,1):
+            save(make_fish(name, tail_up=(f==1)), f"{name}_{f}.png")
 
 # Environment (keep previous PIL versions by re-running gen_assets env part? We'll regenerate env separately)
 print("FISH DONE")

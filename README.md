@@ -2,4 +2,7 @@
 
 <img src="aquarium/aquarium-preview.gif" alt="GitHub Contribution Aquarium" width="100%">
 
-**[▶ Play the Aquarium](https://supergigachadsupreme300.github.io/supergigachadsupreme300/)**
+<!-- AQUARIUM:START -->
+**Lifetime contributions:** 1234  
+**Ecosystem level:** 5 - Thriving Ecosystem
+<!-- AQUARIUM:END -->

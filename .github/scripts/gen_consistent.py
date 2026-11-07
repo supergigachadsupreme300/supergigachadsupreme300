@@ -89,9 +89,9 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
     img=new(W,H); d=ImageDraw.Draw(img)
     ty = H//2 + (-4 if tail_up else 0)
     bodyLeft = int(W*0.18)
-    # tail (forked) attached to body left edge
-    poly(d,[(bodyLeft,ty),(0,ty-10),(bodyLeft-2,ty),(0,ty+10)],tail,K,1)
-    poly(d,[(bodyLeft,ty),(bodyLeft-3,ty-6),(bodyLeft-1,ty),(bodyLeft-3,ty+6)],tailShadow,None)
+    # tail (forked) attached to body left edge - wider
+    poly(d,[(bodyLeft,ty),(0,ty-12),(bodyLeft-1,ty-3),(bodyLeft-1,ty+3),(0,ty+12)],tail,K,1)
+    poly(d,[(bodyLeft,ty),(2,ty-8),(bodyLeft-2,ty),(2,ty+8)],tailShadow,None)
     # body oval
     smooth(d, W*0.52, H*0.5, W*0.34, H*0.38, body, K)
     smooth(d, W*0.52, H*0.62, W*0.30, H*0.22, shadow, None)

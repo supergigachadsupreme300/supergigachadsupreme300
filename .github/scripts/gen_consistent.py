@@ -91,13 +91,13 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
     bodyLeft = int(W*0.18)
     # tail (forked) filled solid, attached to body
     poly(d,[(bodyLeft,ty-2),(2,ty-10),(0,ty-6),(0,ty+6),(2,ty+10),(bodyLeft,ty+2)],tail,K,1)
-    poly(d,[(bodyLeft,ty),(4,ty-6),(4,ty+6)],tailShadow,None)
-    # dorsal fin behind body (smooth, rounded, no pointy tips)
-    poly(d,[(W*0.26,H*0.18),(W*0.34,8),(W*0.42,4),(W*0.50,2),(W*0.58,4),(W*0.66,8),(W*0.74,H*0.18)],fin,K,1)
-    poly(d,[(W*0.28,H*0.18),(W*0.36,9),(W*0.44,5),(W*0.50,3),(W*0.56,5),(W*0.64,9),(W*0.72,H*0.18)],finHi,None)
-    # anal fin behind body (smooth, rounded)
-    poly(d,[(W*0.26,H*0.82),(W*0.34,H-8),(W*0.42,H-4),(W*0.50,H-2),(W*0.58,H-4),(W*0.66,H-8),(W*0.74,H*0.82)],fin,K,1)
-    poly(d,[(W*0.28,H*0.82),(W*0.36,H-9),(W*0.44,H-5),(W*0.50,H-3),(W*0.56,H-5),(W*0.64,H-9),(W*0.72,H*0.82)],finHi,None)
+    pass
+    # dorsal fin behind body (smooth ellipse, no spikes)
+    ell(d, int(W*0.26), int(H*0.02), int(W*0.74), int(H*0.20), fin, K, 1)
+    ell(d, int(W*0.30), int(H*0.04), int(W*0.70), int(H*0.18), finHi, None)
+    # anal fin behind body (smooth ellipse)
+    ell(d, int(W*0.26), int(H*0.80), int(W*0.74), int(H*0.98), fin, K, 1)
+    ell(d, int(W*0.30), int(H*0.82), int(W*0.70), int(H*0.96), finHi, None)
     # body oval on top
     smooth(d, W*0.52, H*0.5, W*0.34, H*0.38, body, K)
     smooth(d, W*0.52, H*0.62, W*0.30, H*0.22, shadow, None)

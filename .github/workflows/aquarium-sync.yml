@@ -29,18 +29,16 @@ jobs:
           npx playwright install chromium --with-deps
 
       - name: Sync GitHub contributions
-        if: ${{ secrets.AQUARIUM_GITHUB_TOKEN != '' && secrets.AQUARIUM_GITHUB_USERNAME != '' }}
         continue-on-error: true
         env:
           AQUARIUM_GITHUB_TOKEN: ${{ secrets.AQUARIUM_GITHUB_TOKEN }}
           AQUARIUM_GITHUB_USERNAME: ${{ secrets.AQUARIUM_GITHUB_USERNAME }}
         run: |
+          if [ -z "$AQUARIUM_GITHUB_TOKEN" ] || [ -z "$AQUARIUM_GITHUB_USERNAME" ]; then
+            echo "Secrets not configured; using existing aquarium-state.json."
+            exit 0
+          fi
           node .github/scripts/aquarium-sync.js
-
-      - name: Skip sync (no secrets configured)
-        if: ${{ secrets.AQUARIUM_GITHUB_TOKEN == '' || secrets.AQUARIUM_GITHUB_USERNAME == '' }}
-        run: |
-          echo "Secrets not configured; using existing aquarium-state.json."
 
       - name: Start local server
         run: |

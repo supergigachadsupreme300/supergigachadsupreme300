@@ -198,6 +198,26 @@ html, body {
 .toast.hidden { display: none; }
 .toast.success { border-color: #4caf50; }
 
+/* Preview mode: hide gameplay UI, keep growth indicator */
+body.preview-mode #coin-counter,
+body.preview-mode #shop-btn,
+body.preview-mode #bottom-bar,
+body.preview-mode #shop-modal,
+body.preview-mode #toast { display: none !important; }
+
+body.preview-mode #growth-info {
+  top: 8px;
+  right: 8px;
+  left: auto;
+  transform: none;
+  font-size: 9px;
+}
+
+/* HUD polish */
+.ui-pill {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .ui-pill { font-size: 10px; padding: 6px 8px; }

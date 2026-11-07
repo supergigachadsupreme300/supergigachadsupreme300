@@ -11,6 +11,8 @@ import { AquariumGrowthEngine } from './aquariumGrowthEngine.js';
 
 export class Game {
   constructor() {
+    const params = new URLSearchParams(window.location.search);
+    this.previewMode = params.get('preview') === '1' || window.location.hash === '#preview';
     this.canvas = document.getElementById('game-canvas');
     this.container = document.getElementById('game-container');
     this.ctx = this.canvas.getContext('2d');
@@ -69,6 +71,15 @@ export class Game {
     document.getElementById('shop-close').addEventListener('click', () => this.closeShop());
     document.getElementById('feed-btn').addEventListener('click', () => this.feedButton());
     document.getElementById('save-btn').addEventListener('click', () => this.save());
+
+    if (this.previewMode) {
+      const hide = (id) => { const el = document.getElementById(id); if (el) el.style.display = 'none'; };
+      hide('coin-counter');
+      hide('shop-btn');
+      hide('bottom-bar');
+      hide('shop-modal');
+      hide('toast');
+    }
 
     this.shop.render();
   }

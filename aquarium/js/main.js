@@ -1,6 +1,11 @@
 import { Game } from './game.js';
 
+const params = new URLSearchParams(window.location.search);
+const preview = params.get('preview') === '1' || window.location.hash === '#preview';
+if (preview) document.body.classList.add('preview-mode');
+
 const game = new Game();
+game.previewMode = preview;
 game.start();
 
 // Auto-save on page hide

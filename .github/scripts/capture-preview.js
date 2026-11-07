@@ -6,7 +6,7 @@ const { spawnSync } = require('child_process');
 (async () => {
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
   const page = await browser.newPage({ viewport: { width: 900, height: 560 } });
-  await page.goto('http://localhost:8765/aquarium/', { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:8765/aquarium/?preview=1', { waitUntil: 'networkidle' });
   await page.waitForTimeout(2500);
 
   const framesDir = path.join(process.cwd(), 'frames');

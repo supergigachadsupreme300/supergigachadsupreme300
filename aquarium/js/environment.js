@@ -34,9 +34,9 @@ export class Environment {
       { x: 0.05, type: 0, phase: 0.1 },
       { x: 0.10, type: 1, phase: 0.6 },
       { x: 0.16, type: 2, phase: 1.1 },
-      // right reef formation
+      // right reef formation (no red branching coral)
       { x: 0.76, type: 3, phase: 1.8 },
-      { x: 0.82, type: 0, phase: 2.3 },
+      { x: 0.82, type: 2, phase: 2.3 },
       { x: 0.88, type: 1, phase: 2.8 }
     ];
   }

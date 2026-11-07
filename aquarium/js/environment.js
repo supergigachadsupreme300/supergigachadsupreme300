@@ -27,9 +27,7 @@ export class Environment {
       { x: 0.93, h: 0.05, phase: 3.1, type: 'plant' }
     ];
     this.rocks = [
-      { x: 0.10, r: 0.018, phase: 0.3 },
-      { x: 0.22, r: 0.014, phase: 0.9 },
-      { x: 0.80, r: 0.016, phase: 1.6 }
+      { x: 0.12, r: 0.020, phase: 0.3 }
     ];
     this.coralSpots = [
       // left reef formation (3 corals)

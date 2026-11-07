@@ -3,7 +3,7 @@ import { SPECIES, APPROVED_SPECIES } from './fish.js';
 const DECOR_ITEMS = [
   { id: 'coral', name: 'Coral', price: 40, desc: 'Colorful reef coral' },
   { id: 'rock', name: 'Rock', price: 20, desc: 'Smooth stone' },
-  { id: 'treasure', name: 'Treasure', price: 120, desc: 'Sunken chest' },
+  // treasure removed per user request
   { id: 'shipwreck', name: 'Shipwreck', price: 200, desc: 'Old wooden wreck' },
   { id: 'shell', name: 'Shell', price: 15, desc: 'Pretty seashell' },
   { id: 'seaweed', name: 'Seaweed', price: 10, desc: 'Green kelp' },

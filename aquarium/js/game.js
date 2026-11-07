@@ -260,11 +260,12 @@ export class Game {
         this.tempRemovals.push({ kind: 'fish', obj: f, at: this.simTime + 18 + Math.random() * 6 });
       }
     } else if (r < 0.72) {
-      // Treasure appears
-      const d = { type: 'treasure', x: 60 + Math.random() * (w - 120), y: seabedY - 4, origin: 'growth', _temp: true };
-      this.state.decor.push(d);
-      this.tempRemovals.push({ kind: 'decor', obj: d, at: this.simTime + 25 + Math.random() * 10 });
-      this.showToast('Treasure spotted!', false);
+      // Small shells scatter on seabed
+      for (let i = 0; i < 3; i++) {
+        const d = { type: 'shell', x: 40 + Math.random() * (w - 80), y: seabedY - 2, origin: 'growth', _temp: true };
+        this.state.decor.push(d);
+        this.tempRemovals.push({ kind: 'decor', obj: d, at: this.simTime + 20 + Math.random() * 8 });
+      }
     } else if (r < 0.88) {
       // Fish gather: spawn food cluster
       for (let i = 0; i < 5; i++) {

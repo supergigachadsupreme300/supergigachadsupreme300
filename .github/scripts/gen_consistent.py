@@ -6,8 +6,8 @@ def bands_clown(d,W,H):
         rect(d, int(bx), int(H*0.22), int(bx)+5, int(H*0.78), (255,255,255,255), (18,18,24,255), 1)
         rect(d, int(bx)+1, int(H*0.22), int(bx)+4, int(H*0.78), (230,230,230,255), None)
 def stripes_vertical(d,W,H,color):
-    for sx in (W*0.30, W*0.46, W*0.62):
-        rect(d, int(sx), 6, int(sx)+3, H-6, color, (18,18,24,255), 1)
+    for sx in (W*0.28, W*0.44, W*0.60):
+        rect(d, int(sx), int(H*0.18), int(sx)+4, int(H*0.82), color, (18,18,24,255), 1)
 def eye_spot(d,W,H):
     ell(d, int(W*0.22), int(H*0.4), int(W*0.34), int(H*0.6), (26,35,126,255), (18,18,24,255), 1)
     ell(d, int(W*0.26), int(H*0.44), int(W*0.30), int(H*0.56), (18,18,24,255), None)
@@ -89,20 +89,22 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
     img=new(W,H); d=ImageDraw.Draw(img)
     ty = H//2 + (-4 if tail_up else 0)
     bodyLeft = int(W*0.18)
-    # tail (forked) attached to body left edge - wider
-    poly(d,[(bodyLeft,ty),(0,ty-12),(bodyLeft-1,ty-3),(bodyLeft-1,ty+3),(0,ty+12)],tail,K,1)
-    poly(d,[(bodyLeft,ty),(2,ty-8),(bodyLeft-2,ty),(2,ty+8)],tailShadow,None)
-    # body oval
+    # tail (forked) filled solid, attached to body
+    poly(d,[(bodyLeft,ty),(0,ty-13),(bodyLeft-2,ty-4),(bodyLeft-2,ty+4),(0,ty+13)],tail,K,1)
+    poly(d,[(bodyLeft,ty),(2,ty-9),(bodyLeft-3,ty),(2,ty+9)],tailShadow,None)
+    poly(d,[(bodyLeft-1,ty-2),(bodyLeft-4,ty),(bodyLeft-1,ty+2)],tailShadow,None)
+    # dorsal fin behind body (drawn first, larger)
+    poly(d,[(W*0.26, H*0.18),(W*0.50, -2),(W*0.74, H*0.18)],fin,K,1)
+    poly(d,[(W*0.28, H*0.18),(W*0.50, 0),(W*0.72, H*0.18)],finHi,None)
+    # anal fin behind body (larger)
+    poly(d,[(W*0.26, H*0.82),(W*0.50, H+2),(W*0.74, H*0.82)],fin,K,1)
+    poly(d,[(W*0.28, H*0.82),(W*0.50, H),(W*0.72, H*0.82)],finHi,None)
+    # body oval on top
     smooth(d, W*0.52, H*0.5, W*0.34, H*0.38, body, K)
     smooth(d, W*0.52, H*0.62, W*0.30, H*0.22, shadow, None)
     smooth(d, W*0.42, H*0.38, W*0.22, H*0.18, highlight, None)
-    # dorsal fin (base along body top)
-    poly(d,[(W*0.30,H*0.14),(W*0.50,2),(W*0.70,H*0.14)],fin,K,1)
-    poly(d,[(W*0.32,H*0.14),(W*0.50,4),(W*0.68,H*0.14)],finHi,None)
-    # anal fin
-    poly(d,[(W*0.30,H*0.86),(W*0.50,H-2),(W*0.70,H*0.86)],fin,K,1)
-    # pectoral fin
-    poly(d,[(W*0.46,H*0.58),(W*0.36,H*0.74),(W*0.56,H*0.74)],fin,K,1)
+    # pectoral fin on top
+    poly(d,[(W*0.46,H*0.55),(W*0.34,H*0.72),(W*0.56,H*0.72)],fin,K,1)
     # pattern
     if pattern: pattern(d, W, H)
     # eye
@@ -120,8 +122,8 @@ def bands_clown(d,W,H):
         rect(d, int(bx), int(H*0.22), int(bx)+5, int(H*0.78), (255,255,255,255), (18,18,24,255), 1)
         rect(d, int(bx)+1, int(H*0.22), int(bx)+4, int(H*0.78), (230,230,230,255), None)
 def stripes_vertical(d,W,H,color):
-    for sx in (W*0.30, W*0.46, W*0.62):
-        rect(d, int(sx), 6, int(sx)+3, H-6, color, (18,18,24,255), 1)
+    for sx in (W*0.28, W*0.44, W*0.60):
+        rect(d, int(sx), int(H*0.18), int(sx)+4, int(H*0.82), color, (18,18,24,255), 1)
 def eye_spot(d,W,H):
     ell(d, int(W*0.22), int(H*0.4), int(W*0.34), int(H*0.6), (26,35,126,255), (18,18,24,255), 1)
     ell(d, int(W*0.26), int(H*0.44), int(W*0.30), int(H*0.56), (18,18,24,255), None)

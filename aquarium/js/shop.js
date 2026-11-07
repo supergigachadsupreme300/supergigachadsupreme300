@@ -1,4 +1,4 @@
-import { SPECIES } from './fish.js';
+import { SPECIES, APPROVED_SPECIES } from './fish.js';
 
 const DECOR_ITEMS = [
   { id: 'coral', name: 'Coral', price: 40, desc: 'Colorful reef coral' },
@@ -34,7 +34,7 @@ export class Shop {
   render() {
     this.content.innerHTML = '';
     if (this.tab === 'fish') {
-      for (const sp of SPECIES) {
+      for (const sp of SPECIES.filter(s => APPROVED_SPECIES.includes(s.id))) {
         this.content.appendChild(this.makeItem(sp.name, sp.price, sp.desc, () => this.buyFish(sp.id), sp.rarity));
       }
     } else if (this.tab === 'decor') {

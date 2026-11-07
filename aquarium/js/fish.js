@@ -17,6 +17,8 @@ export const SPECIES = [
 
 import { getAsset } from './assets.js';
 
+export const APPROVED_SPECIES = ['smallreef', 'clownfish', 'bluetang'];
+
 export function speciesById(id) {
   return SPECIES.find(s => s.id === id);
 }

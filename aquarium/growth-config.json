@@ -10,8 +10,8 @@
     { "min": 5000, "level": 7, "name": "Legendary Ocean" }
   ],
   "progression": {
-    "fishRate": 0.004,
-    "maxBaselineFish": 10,
+    "fishRate": 0.003,
+    "maxBaselineFish": 5,
     "coralRate": 0.002,
     "maxCoral": 6,
     "plantRate": 0.003,
@@ -28,5 +28,5 @@
     { "contributions": 1000, "unlock": "shipwreck", "type": "structure" },
     { "contributions": 2000, "unlock": "treasure", "type": "structure" }
   ],
-  "speciesPool": ["koi", "goldfish", "smallreef"]
+  "speciesPool": ["smallreef", "clownfish", "bluetang"]
 }

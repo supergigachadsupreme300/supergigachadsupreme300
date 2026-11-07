@@ -5,7 +5,7 @@
 A cozy, interactive pixel-art aquarium driven by your lifetime GitHub contributions.
 
 <!-- AQUARIUM:START -->
-**Lifetime contributions:** 1234  
+**Lifetime contributions:** 1762  
 **Ecosystem level:** 5 - Thriving Ecosystem
 <!-- AQUARIUM:END -->
 

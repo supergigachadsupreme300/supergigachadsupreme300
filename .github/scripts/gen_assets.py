@@ -469,4 +469,45 @@ def turtle(tail_up=False):
 save(turtle(False), "turtle_0.png")
 save(turtle(True), "turtle_1.png")
 
+# ---- Royal Gramma (purple front, yellow rear) ----
+def royal_gramma(tail_up=False):
+    img = new(36, 18)
+    d = ImageDraw.Draw(img)
+    P=(123,31,162,255); Y=(255,213,79,255); D=(74,20,140,255); K=(26,26,26,255); W=(255,255,255,255)
+    tail_y = 8 if not tail_up else 5
+    poly(d, [(2,tail_y),(0,tail_y-3),(0,tail_y+3)], Y, K)
+    ell(d, 4,3,30,15, P, K)
+    for x in range(18,31):
+        for y in range(4,16):
+            if (x-20)**2/8**2 + (y-10)**2/6**2 <= 1:
+                d.point((x,y), fill=Y)
+    ell(d, 6,9,28,15, D, None)
+    poly(d, [(8,3),(12,0),(16,3)], P, K)
+    ell(d, 24,6,28,10, W, K)
+    ell(d, 25,7,27,9, K, None)
+    rect(d, 29,8,31,9, K, None)
+    return img
+save(royal_gramma(False), "royalgramma_0.png")
+save(royal_gramma(True), "royalgramma_1.png")
+
+# ---- Moorish Idol (black/white/yellow, long snout) ----
+def moorish_idol(tail_up=False):
+    img = new(44, 20)
+    d = ImageDraw.Draw(img)
+    B=(26,26,26,255); W=(255,255,255,255); Y=(255,193,7,255); K=(26,26,26,255)
+    tail_y = 9 if not tail_up else 6
+    poly(d, [(2,tail_y),(0,tail_y-4),(0,tail_y+4)], Y, K)
+    ell(d, 6,4,30,16, W, K)
+    rect(d, 10,4,13,16, B, K)
+    rect(d, 18,4,21,16, B, K)
+    poly(d, [(12,4),(16,0),(20,4)], Y, K)
+    poly(d, [(20,4),(24,-2),(28,4)], Y, K)
+    rect(d, 30,8,40,11, W, K)
+    rect(d, 30,9,40,10, B, None)
+    ell(d, 24,6,28,10, (255,255,255,255), K)
+    ell(d, 25,7,27,9, K, None)
+    return img
+save(moorish_idol(False), "moorishidol_0.png")
+save(moorish_idol(True), "moorishidol_1.png")
+
 print("DONE")

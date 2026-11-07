@@ -10,7 +10,9 @@ export const SPECIES = [
   { id: 'butterflyfish', name: 'Butterflyfish', price: 70, rarity: 'uncommon', speed: 32, size: 0.9, color: '#ffeb3b', accent: '#1a237e', schooling: true, desc: 'Yellow with eye spot', pattern: 'butterfly' },
   { id: 'pufferfish', name: 'Pufferfish', price: 110, rarity: 'rare', speed: 20, size: 1.0, color: '#fff59d', accent: '#f48fb1', schooling: false, desc: 'Round spiky fish', pattern: 'puffer' },
   { id: 'lionfish', name: 'Lionfish', price: 130, rarity: 'rare', speed: 24, size: 1.1, color: '#e53935', accent: '#ffca28', schooling: false, desc: 'Striped with fan fins', pattern: 'lion' },
-  { id: 'smallreef', name: 'Small Reef Fish', price: 15, rarity: 'common', speed: 42, size: 0.6, color: '#4dd0e1', accent: '#ffee58', schooling: true, desc: 'Tiny blue fish', pattern: 'solid' }
+  { id: 'smallreef', name: 'Small Reef Fish', price: 15, rarity: 'common', speed: 42, size: 0.6, color: '#4dd0e1', accent: '#ffee58', schooling: true, desc: 'Tiny blue fish', pattern: 'solid' },
+  { id: 'royalgramma', name: 'Royal Gramma', price: 85, rarity: 'rare', speed: 30, size: 0.9, color: '#7b1fa2', accent: '#ffca28', schooling: false, desc: 'Purple and yellow', pattern: 'solid' },
+  { id: 'moorishidol', name: 'Moorish Idol', price: 120, rarity: 'rare', speed: 28, size: 1.0, color: '#ffffff', accent: '#ffc107', schooling: false, desc: 'Black, white and gold', pattern: 'solid' }
 ];
 
 import { getAsset } from './assets.js';

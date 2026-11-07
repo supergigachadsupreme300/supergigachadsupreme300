@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "levels": [
+    { "min": 0, "level": 1, "name": "Seedling Tank" },
+    { "min": 50, "level": 2, "name": "Growing Reef" },
+    { "min": 200, "level": 3, "name": "Living Reef" },
+    { "min": 500, "level": 4, "name": "Vibrant Aquarium" },
+    { "min": 1000, "level": 5, "name": "Thriving Ecosystem" },
+    { "min": 2500, "level": 6, "name": "Deep Ocean Habitat" },
+    { "min": 5000, "level": 7, "name": "Legendary Ocean" }
+  ],
+  "progression": {
+    "fishRate": 0.06,
+    "maxBaselineFish": 36,
+    "coralRate": 0.025,
+    "maxCoral": 14,
+    "plantRate": 0.035,
+    "maxPlant": 18,
+    "decorRate": 0.015,
+    "maxDecor": 10
+  },
+  "milestones": [
+    { "contributions": 100, "unlock": "clownfish", "type": "species" },
+    { "contributions": 300, "unlock": "bluetang", "type": "species" },
+    { "contributions": 700, "unlock": "tropical", "type": "species" },
+    { "contributions": 1500, "unlock": "exotic", "type": "species" },
+    { "contributions": 500, "unlock": "turtle", "type": "species" },
+    { "contributions": 1000, "unlock": "shipwreck", "type": "structure" },
+    { "contributions": 2000, "unlock": "treasure", "type": "structure" }
+  ],
+  "speciesPool": ["koi", "goldfish"]
+}

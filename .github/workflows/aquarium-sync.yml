@@ -1,0 +1,38 @@
+name: Aquarium Sync
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aquarium-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync GitHub contributions
+        env:
+          AQUARIUM_GITHUB_TOKEN: ${{ secrets.AQUARIUM_GITHUB_TOKEN }}
+          AQUARIUM_GITHUB_USERNAME: ${{ secrets.AQUARIUM_GITHUB_USERNAME }}
+        run: |
+          node .github/scripts/aquarium-sync.js
+
+      - name: Commit changes if any
+        run: |
+          git add aquarium/aquarium-state.json README.md
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "aquarium: sync contribution data"
+          git push

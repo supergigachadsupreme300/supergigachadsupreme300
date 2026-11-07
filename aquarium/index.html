@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Pixel Aquarium Simulator</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="game-container">
+      <canvas id="game-canvas"></canvas>
+
+      <!-- Top-left coin counter -->
+      <div id="coin-counter" class="ui-pill">
+        <span class="coin-icon"></span>
+        <span id="coin-value">0</span>
+      </div>
+
+      <!-- Top-center growth info -->
+      <div id="growth-info" class="ui-pill" style="left:50%;transform:translateX(-50%);">
+        <span id="level-value">Lv.1</span>
+        <span style="margin:0 6px;">|</span>
+        <span id="contrib-value">0</span> contribs
+      </div>
+
+      <!-- Top-right shop button -->
+      <button id="shop-btn" class="pixel-btn" aria-label="Open shop">SHOP</button>
+
+      <!-- Bottom interaction bar -->
+      <div id="bottom-bar">
+        <button id="feed-btn" class="pixel-btn" aria-label="Feed fish">FEED</button>
+        <button id="save-btn" class="pixel-btn" aria-label="Save game">SAVE</button>
+        <span id="hint-text">Click the water to drop food</span>
+      </div>
+
+      <!-- Shop modal -->
+      <div id="shop-modal" class="modal hidden">
+        <div class="modal-panel">
+          <div class="modal-header">
+            <h2>SHOP</h2>
+            <button id="shop-close" class="pixel-btn small">X</button>
+          </div>
+          <div class="shop-tabs">
+            <button class="tab-btn active" data-tab="fish">FISH</button>
+            <button class="tab-btn" data-tab="decor">DECOR</button>
+            <button class="tab-btn" data-tab="upgrades">UPGRADES</button>
+          </div>
+          <div id="shop-content" class="shop-content"></div>
+        </div>
+      </div>
+
+      <!-- Toast -->
+      <div id="toast" class="toast hidden"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

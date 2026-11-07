@@ -27,10 +27,9 @@ export class Environment {
       { x: 0.93, h: 0.05, phase: 3.1, type: 'plant' }
     ];
     this.rocks = [
-      { x: 0.14, r: 0.028, phase: 0.3 },
-      { x: 0.20, r: 0.020, phase: 0.9 },
-      { x: 0.72, r: 0.025, phase: 1.6 },
-      { x: 0.88, r: 0.022, phase: 2.2 }
+      { x: 0.10, r: 0.018, phase: 0.3 },
+      { x: 0.22, r: 0.014, phase: 0.9 },
+      { x: 0.80, r: 0.016, phase: 1.6 }
     ];
     this.coralSpots = [
       // left reef formation (3 corals)
@@ -177,10 +176,10 @@ export class Environment {
     const sw = getAsset('shipwreck', 0);
     if (sw) {
       ctx.save();
-      ctx.globalAlpha = 0.9;
+      ctx.globalAlpha = 0.85;
       ctx.imageSmoothingEnabled = false;
-      const s = 1.1;
-      ctx.drawImage(sw, w * 0.42 - sw.width * s / 2, seabedY - sw.height * s + 6, sw.width * s, sw.height * s);
+      const s = 0.5;
+      ctx.drawImage(sw, w * 0.82 - sw.width * s / 2, seabedY - sw.height * s + 4, sw.width * s, sw.height * s);
       ctx.restore();
     }
 

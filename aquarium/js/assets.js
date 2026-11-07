@@ -10,6 +10,7 @@ const FILES = {
   koi: ['koi_0.png','koi_1.png'],
   smallreef: ['smallreef_0.png','smallreef_1.png'],
   turtle: ['turtle_0.png','turtle_1.png'],
+  crab: ['crab_0.png','crab_1.png'],
   royalgramma: ['royalgramma_0.png','royalgramma_1.png'],
   moorishidol: ['moorishidol_0.png','moorishidol_1.png'],
   goldfish: ['goldfish_0.png','goldfish_1.png'],

@@ -12,6 +12,23 @@ export function updateFishes(fishes, dt, w, h, particles) {
 
     if (f.eating > 0) f.eating = Math.max(0, f.eating - dt);
 
+    // Crab: walk on seabed
+    if (f.id === 'crab') {
+      const seabedY = h * 0.82;
+      if (f.y < seabedY - 6) f.vy += 40 * dt;
+      else { f.y = seabedY - 6; f.vy = 0; }
+      f.stateTimer -= dt;
+      if (f.stateTimer <= 0) {
+        f.vx = (Math.random() < 0.5 ? -1 : 1) * (6 + Math.random() * 6);
+        f.stateTimer = 2 + Math.random() * 4;
+      }
+      f.x += f.vx * dt;
+      if (f.x < BOUND_MARGIN) { f.x = BOUND_MARGIN; f.vx = Math.abs(f.vx); }
+      if (f.x > w - BOUND_MARGIN) { f.x = w - BOUND_MARGIN; f.vx = -Math.abs(f.vx); }
+      f.animPhase += dt * 3;
+      continue;
+    }
+
     // state timer
     f.stateTimer -= dt;
     if (f.stateTimer <= 0) {

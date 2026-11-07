@@ -254,11 +254,42 @@ def turtle(tail_up=False):
     poly(d, [(82,56),(92,64),(86,48)], L, K, 1)
     return img
 
+# Crab: side view
+def crab(tail_up=False):
+    img = new(64, 40); d = ImageDraw.Draw(img)
+    R=(200,60,40,255); Dc=(140,30,20,255); L=(240,120,90,255); K=(18,18,24,255)
+    Y=(255,213,79,255)
+    smooth(d, 32, 18, 22, 12, R, K)
+    smooth(d, 32, 22, 18, 6, Dc, None)
+    smooth(d, 24, 14, 10, 6, L, None)
+    for i in range(-2,3):
+        line(d, 32+i*6, 8, 32+i*6, 28, Dc, 1)
+    line(d, 22, 14, 20, 8, Dc, 2)
+    line(d, 42, 14, 44, 8, Dc, 2)
+    ell(d, 18, 4, 22, 8, (255,255,255,255), K, 1)
+    ell(d, 42, 4, 46, 8, (255,255,255,255), K, 1)
+    ell(d, 19, 5, 21, 7, (20,20,24,255), None)
+    ell(d, 43, 5, 45, 7, (20,20,24,255), None)
+    claw_y = 22 if not tail_up else 18
+    poly(d, [(10,20),(0,claw_y-6),(0,claw_y+6)], R, K, 1)
+    poly(d, [(10,20),(2,claw_y-4),(2,claw_y+4)], L, None)
+    poly(d, [(54,20),(64,claw_y-6),(64,claw_y+6)], R, K, 1)
+    poly(d, [(54,20),(62,claw_y-4),(62,claw_y+4)], L, None)
+    for i in range(4):
+        x = 18 + i*10
+        line(d, x, 28, x-2, 36, Dc, 2)
+        line(d, x, 28, x+2, 36, Dc, 2)
+    line(d, 28, 24, 36, 24, K, 1)
+    return img
+
 # Run
 for name in SPECS:
     if name == 'turtle':
         save(turtle(False), "turtle_0.png")
         save(turtle(True), "turtle_1.png")
+    elif name == 'crab':
+        save(crab(False), "crab_0.png")
+        save(crab(True), "crab_1.png")
     else:
         for f in (0,1):
             save(make_fish(name, tail_up=(f==1)), f"{name}_{f}.png")

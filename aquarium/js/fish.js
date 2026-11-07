@@ -1,5 +1,6 @@
 export const SPECIES = [
   { id: 'turtle', name: 'Sea Turtle', price: 500, rarity: 'legendary', speed: 14, size: 1.6, color: '#2e7d32', accent: '#a5d6a7', schooling: false, desc: 'Gentle ocean wanderer', pattern: 'turtle' },
+  { id: 'crab', name: 'Crab', price: 60, rarity: 'uncommon', speed: 8, size: 0.9, color: '#c0392b', accent: '#e74c3c', schooling: false, desc: 'Sideways walker', pattern: 'solid' },
   { id: 'koi', name: 'Koi', price: 30, rarity: 'common', speed: 28, size: 1.0, color: '#ff8a65', accent: '#fff', schooling: false, desc: 'Calm pond fish', pattern: 'koi' },
   { id: 'clownfish', name: 'Clownfish', price: 40, rarity: 'common', speed: 34, size: 0.85, color: '#ff7043', accent: '#ffffff', schooling: true, desc: 'Orange with white bands', pattern: 'bands' },
   { id: 'bluetang', name: 'Blue Tang', price: 60, rarity: 'uncommon', speed: 36, size: 0.95, color: '#2979ff', accent: '#ffeb3b', schooling: true, desc: 'Bright blue reef fish', pattern: 'solid' },

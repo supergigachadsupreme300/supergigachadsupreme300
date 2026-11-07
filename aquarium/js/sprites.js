@@ -1,6 +1,6 @@
-// Pixel-art sprite data and rendering helpers.
-// Sprites are stored as arrays of strings (rows) where each char maps to a palette entry.
-// '.' is always transparent.
+// Detailed pixel-art sprite data.
+// Each sprite: array of strings (rows). '.' = transparent.
+// Render with drawSprite() (nearest-neighbor, crisp).
 
 export function drawSprite(ctx, rows, palette, x, y, scale = 1, flipX = false) {
   if (!rows) return;
@@ -21,69 +21,113 @@ export function drawSprite(ctx, rows, palette, x, y, scale = 1, flipX = false) {
 }
 
 export function spriteSize(rows) {
-  const h = rows.length;
-  const w = rows.reduce((m, r) => Math.max(m, r.length), 0);
-  return { w, h };
+  return { w: rows.reduce((m, r) => Math.max(m, r.length), 0), h: rows.length };
 }
 
-// ---- Palettes ----
-export const P = {
-  clown: { O: '#ff7043', W: '#ffffff', B: '#1a1a1a', Y: '#ffca28', D: '#bf360c' },
-  angel: { B: '#f8bbd0', W: '#ffffff', D: '#c2185b', Y: '#ffeb3b', K: '#1a1a1a', L: '#fce4ec' },
-  butter: { Y: '#ffeb3b', B: '#1a237e', W: '#ffffff', O: '#ff8f00', K: '#1a1a1a' },
-  tang: { B: '#2979ff', Y: '#ffeb3b', K: '#1a1a1a', D: '#0d47a1', W: '#ffffff' },
-  koi: { O: '#ff8a65', W: '#ffffff', K: '#1a1a1a', R: '#d84315', Y: '#ffca28' },
-  puffer: { Y: '#fff59d', W: '#ffffff', K: '#1a1a1a', G: '#9e9d24', P: '#f48fb1', D: '#5d4037' },
-  tropical: { G: '#00e676', P: '#ff4081', W: '#ffffff', K: '#1a1a1a', D: '#00897b' },
-  small: { C: '#4dd0e1', Y: '#ffee58', K: '#1a1a1a', W: '#ffffff' },
-  turtle: { G: '#2e7d32', L: '#66bb6a', D: '#1b5e20', K: '#1a1a1a', Y: '#fff176' }
+// ---------- Palettes ----------
+export const PAL = {
+  clown: { O:'#ff6f3c', D:'#d84315', W:'#ffffff', K:'#1a1a1a', Y:'#ffc107', L:'#ffab91' },
+  tang:  { B:'#1e88e5', D:'#0d47a1', Y:'#ffeb3b', K:'#1a1a1a', W:'#ffffff', L:'#64b5f6' },
+  angel: { P:'#f48fb1', D:'#c2185b', Y:'#ffeb3b', K:'#1a1a1a', W:'#ffffff', L:'#f8bbd0' },
+  butter:{ Y:'#ffeb3b', D:'#f9a825', B:'#1a237e', K:'#1a1a1a', W:'#ffffff', O:'#ff8f00' },
+  puffer:{ Y:'#fff59d', D:'#c0ca33', P:'#f48fb1', K:'#1a1a1a', W:'#ffffff', G:'#795548' },
+  koi:   { O:'#ff8a65', D:'#d84315', W:'#ffffff', K:'#1a1a1a', R:'#bf360c', Y:'#ffca28' },
+  lion:  { R:'#e53935', D:'#b71c1c', W:'#ffffff', K:'#1a1a1a', Y:'#ffca28', O:'#ff7043' },
+  small: { C:'#26c6da', D:'#00838f', Y:'#ffee58', K:'#1a1a1a', W:'#ffffff' },
+  turtle:{ G:'#2e7d32', L:'#66bb6a', D:'#1b5e20', K:'#1a1a1a', Y:'#fff176' }
 };
 
-// ---- Fish sprites (2 frames each: tail left / tail right) ----
-// Frame width ~26, height ~12
+// ---------- Fish sprites (facing right; tail on left) ----------
+// Each is an array of 2 frames.
 
-export const FISH = {
+export const FISH_SPRITES = {
   clownfish: {
-    palette: P.clown,
+    palette: PAL.clown,
+    frames: [
+      // frame 0 - tail mid
+      [
+        "......................",
+        ".....KKKK.............",
+        "....KOOOOK............",
+        "...KOOOOOOK...........",
+        "..KOOOOOOOOK..........",
+        ".KOOOOOOOOOOK.........",
+        "KOOOOOOOOOOOOK........",
+        "KWWWOOOOOOOOOOK.......",
+        "KWWWOOOOOOOOOOK.......",
+        "KWWWOOOOOOOOOOK.......",
+        "KOOOOOOOOOOOOK........",
+        ".KOOOOOOOOOOK.........",
+        "..KOOOOOOOOK..........",
+        "...KOOOOOOK...........",
+        "....KOOOOK............",
+        ".....KKKK............."
+      ],
+      // frame 1 - tail up
+      [
+        ".....KKKK.............",
+        "....KOOOOK............",
+        "...KOOOOOOK...........",
+        "..KOOOOOOOOK..........",
+        ".KOOOOOOOOOOK.........",
+        "KOOOOOOOOOOOOK........",
+        "KWWWOOOOOOOOOOK.......",
+        "KWWWOOOOOOOOOOK.......",
+        "KWWWOOOOOOOOOOK.......",
+        "KOOOOOOOOOOOOK........",
+        ".KOOOOOOOOOOK.........",
+        "..KOOOOOOOOK..........",
+        "...KOOOOOOK...........",
+        "....KOOOOK............",
+        ".....KKKK.............",
+        "......................"
+      ]
+    ]
+  },
+
+  bluetang: {
+    palette: PAL.tang,
     frames: [
       [
-        "..........................",
-        ".......OOOOO..............",
-        ".....OOOOOOOOO............",
-        "....OOOOOOOOOOO...........",
-        "...OOOOOOOOOOOOO..........",
-        "..OOOOOOOOOOOOOOO.........",
-        "..OOOOOOOOOOOOOOO.........",
-        "..OOOOOOOOOOOOOOO.........",
-        "...OOOOOOOOOOOOO..........",
-        "....OOOOOOOOOOO...........",
-        ".....OOOOOOOOO............",
-        ".......OOOOO.............."
+        "......................",
+        ".....KKKK.............",
+        "....KBBB BK...........",
+        "...KBBBBBBK...........",
+        "..KBBBBBBBBK..........",
+        ".KBBBBBBBBBBK.........",
+        "KBBBBBBBBBBBBK........",
+        "KBBBBBBBBBBBBBK.......",
+        "KBBBBBBBBBBBBBK.......",
+        "KBBBBBBBBBBBBK........",
+        ".KBBBBBBBBBBK.........",
+        "..KBBBBBBBBK..........",
+        "...KBBBBBBK...........",
+        "....KBBB BK...........",
+        ".....KKKK.............",
+        "......................"
       ],
       [
-        "..........................",
-        ".......OOOOO..............",
-        ".....OOOOOOOOO............",
-        "....OOOOOOOOOOO...........",
-        "...OOOOOOOOOOOOO..........",
-        "..OOOOOOOOOOOOOOO.........",
-        "..OOOOOOOOOOOOOOO.........",
-        "..OOOOOOOOOOOOOOO.........",
-        "...OOOOOOOOOOOOO..........",
-        "....OOOOOOOOOOO...........",
-        ".....OOOOOOOOO............",
-        ".......OOOOO.............."
+        ".....KKKK.............",
+        "....KBBB BK...........",
+        "...KBBBBBBK...........",
+        "..KBBBBBBBBK..........",
+        ".KBBBBBBBBBBK.........",
+        "KBBBBBBBBBBBBK........",
+        "KBBBBBBBBBBBBBK.......",
+        "KBBBBBBBBBBBBBK.......",
+        "KBBBBBBBBBBBBK........",
+        ".KBBBBBBBBBBK.........",
+        "..KBBBBBBBBK..........",
+        "...KBBBBBBK...........",
+        "....KBBB BK...........",
+        ".....KKKK.............",
+        "......................",
+        "......................"
       ]
-    ],
-    // stripes overlay drawn separately
-    stripes: true
+    ]
   }
 };
 
-// Because hand-crafting many frames is huge, we instead build detailed fish
-// procedurally with a richer multi-part renderer (see fish.js). The sprite
-// system above is used for small decorative elements and coral.
-
-export const CORAL_SPRITES = {};
-export const PLANT_SPRITES = {};
-export const DECOR_SPRITES = {};
+// Note: additional species sprites to be added.
+// For now, missing species fall back to a generic detailed fish renderer in fish.js.
+export default FISH_SPRITES;

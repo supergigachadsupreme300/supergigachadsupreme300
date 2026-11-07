@@ -1,3 +1,5 @@
+import { getAsset } from './assets.js';
+
 export class Environment {
   constructor() {
     this.time = 0;
@@ -100,19 +102,56 @@ export class Environment {
     }
     ctx.restore();
 
-    // Midground coral spots
-    for (const c of this.coralSpots) {
-      this.drawCoralFormation(ctx, c.x * w, seabedY, t, c.type, c.phase, 0.7);
+    // Midground coral sprites
+    const coralKeys = ['coral_branching','coral_brain','coral_seafan','anemone'];
+    for (let i = 0; i < this.coralSpots.length; i++) {
+      const c = this.coralSpots[i];
+      const key = coralKeys[c.type % coralKeys.length];
+      const img = getAsset(key, 0);
+      if (img) {
+        const scale = 0.9;
+        const iw = img.width * scale;
+        const ih = img.height * scale;
+        ctx.save();
+        ctx.globalAlpha = 0.85;
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, c.x * w - iw/2, seabedY - ih + 4, iw, ih);
+        ctx.restore();
+      } else {
+        this.drawCoralFormation(ctx, c.x * w, seabedY, t, c.type, c.phase, 0.7);
+      }
     }
 
     // Midground rocks
     for (const r of this.rocks) {
-      this.drawRock(ctx, r.x * w, seabedY - 2, r.r * w, t, r.phase, 0.8);
+      const img = getAsset('rock', 0);
+      if (img) {
+        const s = 0.8;
+        ctx.save();
+        ctx.globalAlpha = 0.9;
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, r.x * w - img.width*s/2, seabedY - img.height*s + 2, img.width*s, img.height*s);
+        ctx.restore();
+      } else {
+        this.drawRock(ctx, r.x * w, seabedY - 2, r.r * w, t, r.phase, 0.8);
+      }
     }
 
-    // Midground plants (seaweed/kelp) - behind foreground
+    // Midground plants
     for (const p of this.plants) {
-      this.drawPlant(ctx, p.x * w, seabedY, p.h * h, t, p.phase, p.type, 0.9);
+      const key = p.type === 'kelp' ? 'kelp' : 'seaweed';
+      const img = getAsset(key, 0);
+      if (img) {
+        const s = p.type === 'kelp' ? 0.9 : 0.8;
+        const sway = Math.sin(t * 1.1 + p.phase) * 3;
+        ctx.save();
+        ctx.globalAlpha = 0.9;
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, p.x * w - img.width*s/2 + sway, seabedY - img.height*s + 4, img.width*s, img.height*s);
+        ctx.restore();
+      } else {
+        this.drawPlant(ctx, p.x * w, seabedY, p.h * h, t, p.phase, p.type, 0.9);
+      }
     }
 
     // Seabed
@@ -300,57 +339,44 @@ export class Environment {
 
   drawDecorItem(ctx, d, t) {
     const x = d.x, y = d.y;
+    const drawImg = (key, scale = 1, oy = 0) => {
+      const img = getAsset(key, 0);
+      if (!img) return false;
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      const w = img.width * scale;
+      const h = img.height * scale;
+      ctx.drawImage(img, x - w / 2, y - h + oy, w, h);
+      ctx.restore();
+      return true;
+    };
     switch (d.type) {
       case 'coral':
-        this.drawCoralFormation(ctx, x, y + 8, t, 0, x, 1);
+        if (!drawImg('coral_branching', 0.9, 8)) this.drawCoralFormation(ctx, x, y + 8, t, 0, x, 1);
         break;
       case 'rock':
-        this.drawRock(ctx, x, y + 4, 16, t, x, 1);
+        if (!drawImg('rock', 0.9, 4)) this.drawRock(ctx, x, y + 4, 16, t, x, 1);
         break;
       case 'treasure':
-        // chest
-        ctx.fillStyle = '#8d6e63';
-        ctx.fillRect(x - 14, y - 10, 28, 16);
-        ctx.fillStyle = '#ffd54f';
-        ctx.fillRect(x - 14, y - 12, 28, 4);
-        ctx.fillStyle = '#ffca28';
-        ctx.fillRect(x - 3, y - 4, 6, 6);
-        ctx.fillStyle = '#ffd54f';
-        for (let c = 0; c < 3; c++) {
-          ctx.beginPath();
-          ctx.arc(x - 8 + c * 8, y - 16 + Math.sin(t * 2 + c) * 2, 3, 0, Math.PI * 2);
-          ctx.fill();
+        if (!drawImg('treasure', 0.9, 8)) {
+          ctx.fillStyle = '#8d6e63'; ctx.fillRect(x - 14, y - 10, 28, 16);
         }
         break;
       case 'shipwreck':
-        ctx.fillStyle = '#5d4037';
-        ctx.fillRect(x - 30, y - 6, 60, 12);
-        ctx.fillRect(x - 6, y - 30, 12, 30);
-        ctx.fillStyle = '#8d6e63';
-        ctx.fillRect(x - 30, y - 8, 60, 4);
-        // broken mast
-        ctx.fillStyle = '#4e342e';
-        ctx.fillRect(x + 8, y - 24, 4, 18);
+        if (!drawImg('shipwreck', 0.9, 10)) {
+          ctx.fillStyle = '#5d4037'; ctx.fillRect(x - 30, y - 6, 60, 12);
+        }
         break;
       case 'shell':
-        ctx.fillStyle = '#ffccbc';
-        ctx.beginPath();
-        ctx.arc(x, y, 8, Math.PI, 0);
-        ctx.fill();
-        ctx.strokeStyle = '#ff8a65';
-        ctx.lineWidth = 1;
-        for (let s = 0; s < 4; s++) {
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.lineTo(x - 6 + s * 4, y - 6);
-          ctx.stroke();
+        if (!drawImg('shell', 0.9, 4)) {
+          ctx.fillStyle = '#ffccbc'; ctx.beginPath(); ctx.arc(x, y, 8, Math.PI, 0); ctx.fill();
         }
         break;
       case 'seaweed':
-        this.drawPlant(ctx, x, y + 4, 40, t, x, 'seaweed', 1);
+        if (!drawImg('seaweed', 0.9, 4)) this.drawPlant(ctx, x, y + 4, 40, t, x, 'seaweed', 1);
         break;
       case 'plant':
-        this.drawPlant(ctx, x, y + 4, 30, t, x, 'plant', 1);
+        if (!drawImg('kelp', 0.7, 4)) this.drawPlant(ctx, x, y + 4, 30, t, x, 'plant', 1);
         break;
     }
   }

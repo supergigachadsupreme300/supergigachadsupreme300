@@ -9,8 +9,11 @@ export const SPECIES = [
   { id: 'angelfish', name: 'Angelfish', price: 90, rarity: 'rare', speed: 30, size: 1.15, color: '#f8bbd0', accent: '#c2185b', schooling: false, desc: 'Elegant tall fish', pattern: 'angel' },
   { id: 'butterflyfish', name: 'Butterflyfish', price: 70, rarity: 'uncommon', speed: 32, size: 0.9, color: '#ffeb3b', accent: '#1a237e', schooling: true, desc: 'Yellow with eye spot', pattern: 'butterfly' },
   { id: 'pufferfish', name: 'Pufferfish', price: 110, rarity: 'rare', speed: 20, size: 1.0, color: '#fff59d', accent: '#f48fb1', schooling: false, desc: 'Round spiky fish', pattern: 'puffer' },
+  { id: 'lionfish', name: 'Lionfish', price: 130, rarity: 'rare', speed: 24, size: 1.1, color: '#e53935', accent: '#ffca28', schooling: false, desc: 'Striped with fan fins', pattern: 'lion' },
   { id: 'smallreef', name: 'Small Reef Fish', price: 15, rarity: 'common', speed: 42, size: 0.6, color: '#4dd0e1', accent: '#ffee58', schooling: true, desc: 'Tiny blue fish', pattern: 'solid' }
 ];
+
+import { getAsset } from './assets.js';
 
 export function speciesById(id) {
   return SPECIES.find(s => s.id === id);
@@ -40,7 +43,24 @@ export class Fish {
 
   draw(ctx, t) {
     const sp = this.species;
-    const size = 12 * this.size; // base pixel size
+    // Sprite-based rendering (PNG assets)
+    const assetKey = this.id === 'bluetang' ? 'bluetang' : this.id;
+    const frames = (window.__ASSETS__ && window.__ASSETS__[assetKey]) ? window.__ASSETS__[assetKey].length : 0;
+    // Use module-level ASSETS via dynamic import is not sync; instead read from global set by game.
+    const img = (typeof getAsset === 'function') ? getAsset(assetKey, Math.floor(t * 4 + this.animPhase) % 2) : null;
+    if (img) {
+      const dir = this.vx >= 0 ? 1 : -1;
+      const w = img.width;
+      const h = img.height;
+      ctx.save();
+      ctx.translate(Math.round(this.x), Math.round(this.y));
+      if (dir < 0) ctx.scale(-1, 1);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      ctx.restore();
+      return;
+    }
+    const size = 12 * this.size; // base pixel size (fallback procedural)
     const dir = this.vx >= 0 ? 1 : -1;
     const wag = Math.sin(t * 9 + this.animPhase) * 0.4;
     const finWag = Math.sin(t * 6 + this.finPhase) * 0.25;

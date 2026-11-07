@@ -11,18 +11,37 @@ export class Environment {
     for (let i = 0; i < 6; i++) {
       this.currents.push({ y: 0.15 + i * 0.12, speed: 0.4 + Math.random() * 0.6, phase: Math.random() * Math.PI * 2, len: 0.3 + Math.random() * 0.4 });
     }
-    this.plants = [];
-    for (let i = 0; i < 18; i++) {
-      this.plants.push({ x: i * 0.055 + 0.01, h: 0.05 + Math.random() * 0.13, phase: Math.random() * Math.PI * 2, type: Math.random() < 0.33 ? 'seaweed' : (Math.random() < 0.5 ? 'kelp' : 'plant') });
-    }
-    this.rocks = [];
-    for (let i = 0; i < 7; i++) {
-      this.rocks.push({ x: 0.08 + i * 0.13, r: 0.018 + Math.random() * 0.025, phase: Math.random() * Math.PI * 2 });
-    }
-    this.coralSpots = [];
-    for (let i = 0; i < 6; i++) {
-      this.coralSpots.push({ x: 0.1 + i * 0.15, type: i % 4, phase: Math.random() * Math.PI * 2 });
-    }
+    // Structured reef composition: left group, right group, center landmark, sparse middle.
+    this.plants = [
+      // left reef cluster
+      { x: 0.06, h: 0.12, phase: 0.2, type: 'kelp' },
+      { x: 0.09, h: 0.09, phase: 0.7, type: 'seaweed' },
+      { x: 0.12, h: 0.07, phase: 1.1, type: 'plant' },
+      // center-left small
+      { x: 0.30, h: 0.06, phase: 1.5, type: 'seaweed' },
+      // right reef cluster
+      { x: 0.78, h: 0.11, phase: 2.0, type: 'kelp' },
+      { x: 0.82, h: 0.08, phase: 2.4, type: 'seaweed' },
+      { x: 0.86, h: 0.06, phase: 2.8, type: 'plant' },
+      // far right
+      { x: 0.93, h: 0.05, phase: 3.1, type: 'plant' }
+    ];
+    this.rocks = [
+      { x: 0.14, r: 0.028, phase: 0.3 },
+      { x: 0.20, r: 0.020, phase: 0.9 },
+      { x: 0.72, r: 0.025, phase: 1.6 },
+      { x: 0.88, r: 0.022, phase: 2.2 }
+    ];
+    this.coralSpots = [
+      // left reef formation (3 corals)
+      { x: 0.05, type: 0, phase: 0.1 },
+      { x: 0.10, type: 1, phase: 0.6 },
+      { x: 0.16, type: 2, phase: 1.1 },
+      // right reef formation
+      { x: 0.76, type: 3, phase: 1.8 },
+      { x: 0.82, type: 0, phase: 2.3 },
+      { x: 0.88, type: 1, phase: 2.8 }
+    ];
   }
 
   draw(ctx, w, h, t) {
@@ -152,6 +171,17 @@ export class Environment {
       } else {
         this.drawPlant(ctx, p.x * w, seabedY, p.h * h, t, p.phase, p.type, 0.9);
       }
+    }
+
+    // Central landmark: shipwreck (midground)
+    const sw = getAsset('shipwreck', 0);
+    if (sw) {
+      ctx.save();
+      ctx.globalAlpha = 0.9;
+      ctx.imageSmoothingEnabled = false;
+      const s = 1.1;
+      ctx.drawImage(sw, w * 0.42 - sw.width * s / 2, seabedY - sw.height * s + 6, sw.width * s, sw.height * s);
+      ctx.restore();
     }
 
     // Seabed

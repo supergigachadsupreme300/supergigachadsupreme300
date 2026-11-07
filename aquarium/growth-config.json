@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "levels": [
     { "min": 0, "level": 1, "name": "Seedling Tank" },
     { "min": 50, "level": 2, "name": "Growing Reef" },
@@ -10,14 +10,14 @@
     { "min": 5000, "level": 7, "name": "Legendary Ocean" }
   ],
   "progression": {
-    "fishRate": 0.06,
-    "maxBaselineFish": 36,
-    "coralRate": 0.025,
-    "maxCoral": 14,
-    "plantRate": 0.035,
-    "maxPlant": 18,
-    "decorRate": 0.015,
-    "maxDecor": 10
+    "fishRate": 0.004,
+    "maxBaselineFish": 10,
+    "coralRate": 0.002,
+    "maxCoral": 6,
+    "plantRate": 0.003,
+    "maxPlant": 8,
+    "decorRate": 0.0015,
+    "maxDecor": 5
   },
   "milestones": [
     { "contributions": 100, "unlock": "clownfish", "type": "species" },
@@ -28,5 +28,5 @@
     { "contributions": 1000, "unlock": "shipwreck", "type": "structure" },
     { "contributions": 2000, "unlock": "treasure", "type": "structure" }
   ],
-  "speciesPool": ["koi", "goldfish"]
+  "speciesPool": ["koi", "goldfish", "smallreef"]
 }

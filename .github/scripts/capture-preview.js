@@ -11,7 +11,7 @@ const { spawnSync } = require('child_process');
 
   const framesDir = path.join(process.cwd(), 'frames');
   fs.mkdirSync(framesDir, { recursive: true });
-  const total = 48;
+  const total = 90;
   for (let i = 0; i < total; i++) {
     await page.screenshot({ path: path.join(framesDir, `frame-${String(i).padStart(3, '0')}.png`) });
     await page.waitForTimeout(80);

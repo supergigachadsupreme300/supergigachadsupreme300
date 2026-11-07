@@ -2,10 +2,12 @@ const KEY = 'pixelAquariumSave_v1';
 
 const DEFAULTS = {
   coins: 50,
-  fish: [], // array of species ids
-  decor: [], // array of {type, x, y}
+  fish: [],
+  decor: [],
   upgrades: { capacity: 6, autoFeed: false },
-  settings: { sound: true }
+  settings: { sound: true },
+  lastSave: Date.now(),
+  simState: null // { fish: [{id,x,y,vx,vy,origin,animPhase}] }
 };
 
 export function loadSave() {
@@ -18,7 +20,9 @@ export function loadSave() {
       fish: Array.isArray(parsed.fish) ? parsed.fish : [],
       decor: Array.isArray(parsed.decor) ? parsed.decor : [],
       upgrades: Object.assign({}, DEFAULTS.upgrades, parsed.upgrades || {}),
-      settings: Object.assign({}, DEFAULTS.settings, parsed.settings || {})
+      settings: Object.assign({}, DEFAULTS.settings, parsed.settings || {}),
+      lastSave: typeof parsed.lastSave === 'number' ? parsed.lastSave : Date.now(),
+      simState: parsed.simState && typeof parsed.simState === 'object' ? parsed.simState : null
     };
   } catch (e) {
     console.warn('Save load failed, using defaults', e);

@@ -36,6 +36,7 @@ export class Fish {
     this.size = sp.size;
     this.animPhase = Math.random() * Math.PI * 2;
     this.state = 'wander';
+    this.stateTimer = 2 + Math.random() * 4;
     this.wanderTimer = 0;
     this.wanderTarget = { x, y };
     this.eating = 0;

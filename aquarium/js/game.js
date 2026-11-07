@@ -31,11 +31,31 @@ export class Game {
     this.interaction = new Interaction(this.canvas, this);
     this.shop = new Shop(this);
 
-    this.fishes = this.state.fish.map((id, idx) => {
-      const f = new Fish(id, 60 + (idx % 5) * 40, 60 + Math.floor(idx / 5) * 40);
-      f.origin = 'player';
-      return f;
-    });
+    // Restore simulation state if available
+    if (this.state.simState && Array.isArray(this.state.simState.fish)) {
+      this.fishes = this.state.simState.fish.map(s => {
+        const f = new Fish(s.id, s.x, s.y);
+        f.vx = s.vx || 0; f.vy = s.vy || 0;
+        f.origin = s.origin || 'player';
+        f.animPhase = s.animPhase || Math.random() * Math.PI * 2;
+        return f;
+      });
+      // Offline progression (capped at 8 hours)
+      const elapsed = Math.min(8 * 3600, (Date.now() - (this.state.lastSave || Date.now())) / 1000);
+      if (elapsed > 0) {
+        const w = 320, h = 180; // approximate; will clamp later in update
+        for (const f of this.fishes) {
+          f.x += f.vx * elapsed * 0.5;
+          f.y += f.vy * elapsed * 0.5;
+        }
+      }
+    } else {
+      this.fishes = this.state.fish.map((id, idx) => {
+        const f = new Fish(id, 60 + (idx % 5) * 40, 60 + Math.floor(idx / 5) * 40);
+        f.origin = 'player';
+        return f;
+      });
+    }
 
     this.growthEngine = new AquariumGrowthEngine();
     this.growthProgression = null;
@@ -59,6 +79,10 @@ export class Game {
     this.running = true;
     this.autoFeedTimer = 0;
     this.toastTimer = 0;
+    this.simTime = 0;
+    this.eventTimer = 25 + Math.random() * 20;
+    this.turtleActive = false;
+    this.tempRemovals = [];
 
     this.resize();
     window.addEventListener('resize', () => this.resize());
@@ -115,11 +139,35 @@ export class Game {
 
   update(dt) {
     const w = this.logicalW, h = this.logicalH;
+    this.simTime += dt;
     this.particles.update(dt, w, h);
     const eaten = updateFishes(this.fishes, dt, w, h, this.particles);
     if (eaten > 0) {
       this.economy.add(eaten * 3);
       this.showToast('Fish fed! +' + (eaten * 3) + ' coins', false);
+    }
+
+    // Temp entity removal
+    for (let i = this.tempRemovals.length - 1; i >= 0; i--) {
+      const t = this.tempRemovals[i];
+      if (this.simTime >= t.at) {
+        if (t.kind === 'fish') {
+          const idx = this.fishes.indexOf(t.obj);
+          if (idx >= 0) this.fishes.splice(idx, 1);
+          if (t.obj && t.obj.id === 'turtle') this.turtleActive = false;
+        } else if (t.kind === 'decor') {
+          const idx = this.state.decor.indexOf(t.obj);
+          if (idx >= 0) this.state.decor.splice(idx, 1);
+        }
+        this.tempRemovals.splice(i, 1);
+      }
+    }
+
+    // Dynamic events
+    this.eventTimer -= dt;
+    if (this.eventTimer <= 0) {
+      this.eventTimer = 35 + Math.random() * 35;
+      this.triggerEvent(w, h);
     }
 
     // auto feeder
@@ -145,6 +193,13 @@ export class Game {
   }
 
   dropFood(x, y) {
+    // Inspect fish if clicked near one
+    for (const f of this.fishes) {
+      if (Math.hypot(f.x - x, f.y - y) < 18) {
+        this.showToast(f.species.name + ' — ' + f.state, false);
+        return;
+      }
+    }
     if (!this.economy.spend(1)) {
       this.showToast('Not enough coins to feed!', true);
       return;
@@ -179,6 +234,56 @@ export class Game {
     this.state.decor.push(d);
   }
 
+  triggerEvent(w, h) {
+    const seabedY = h * 0.82;
+    const r = Math.random();
+    if (r < 0.28) {
+      // Turtle visit
+      if (!this.turtleActive) {
+        const f = new Fish('turtle', -50, 40 + Math.random() * (seabedY - 80));
+        f.origin = 'growth'; f._temp = true; f.vx = 18 + Math.random() * 10; f.vy = (Math.random() - 0.5) * 4;
+        this.fishes.push(f);
+        this.tempRemovals.push({ kind: 'fish', obj: f, at: this.simTime + 20 + Math.random() * 10 });
+        this.turtleActive = true;
+        this.showToast('A sea turtle is visiting!', false);
+      }
+    } else if (r < 0.52) {
+      // School of small fish passes through
+      const y = 30 + Math.random() * (seabedY - 60);
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      const startX = dir > 0 ? -30 : w + 30;
+      for (let i = 0; i < 5; i++) {
+        const f = new Fish('smallreef', startX + (dir > 0 ? -i * 18 : i * 18), y + (i - 2) * 7);
+        f.origin = 'growth'; f._temp = true;
+        f.vx = dir * (45 + Math.random() * 15); f.vy = (Math.random() - 0.5) * 3;
+        this.fishes.push(f);
+        this.tempRemovals.push({ kind: 'fish', obj: f, at: this.simTime + 18 + Math.random() * 6 });
+      }
+    } else if (r < 0.72) {
+      // Treasure appears
+      const d = { type: 'treasure', x: 60 + Math.random() * (w - 120), y: seabedY - 4, origin: 'growth', _temp: true };
+      this.state.decor.push(d);
+      this.tempRemovals.push({ kind: 'decor', obj: d, at: this.simTime + 25 + Math.random() * 10 });
+      this.showToast('Treasure spotted!', false);
+    } else if (r < 0.88) {
+      // Fish gather: spawn food cluster
+      for (let i = 0; i < 5; i++) {
+        this.particles.spawnFood(w * (0.35 + Math.random() * 0.3), 15 + i * 4);
+      }
+    } else {
+      // Rare fish swim-by (exotic) if level high enough
+      if (this.growthProgression && this.growthProgression.level >= 4) {
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const f = new Fish('exotic', dir > 0 ? -40 : w + 40, 40 + Math.random() * (seabedY - 80));
+        f.origin = 'growth'; f._temp = true;
+        f.vx = dir * (35 + Math.random() * 10);
+        this.fishes.push(f);
+        this.tempRemovals.push({ kind: 'fish', obj: f, at: this.simTime + 22 + Math.random() * 8 });
+        this.showToast('A rare fish passes by!', false);
+      }
+    }
+  }
+
   openShop() {
     document.getElementById('shop-modal').classList.remove('hidden');
     this.shop.render();
@@ -198,9 +303,15 @@ export class Game {
 
   save() {
     this.state.coins = this.economy.get();
-    // Persist only player-owned entities; growth baseline is regenerated.
     this.state.fish = this.fishes.filter(f => f.origin === 'player').map(f => f.id);
     this.state.decor = this.state.decor.filter(d => d.origin === 'player');
+    this.state.lastSave = Date.now();
+    this.state.simState = {
+      fish: this.fishes.map(f => ({
+        id: f.id, x: f.x, y: f.y, vx: f.vx, vy: f.vy,
+        origin: f.origin, animPhase: f.animPhase
+      }))
+    };
     saveSave(this.state);
     this.showToast('Game saved!', false);
   }

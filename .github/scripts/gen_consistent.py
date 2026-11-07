@@ -90,9 +90,8 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
     ty = H//2 + (-4 if tail_up else 0)
     bodyLeft = int(W*0.18)
     # tail (forked) filled solid, attached to body
-    poly(d,[(bodyLeft,ty),(0,ty-13),(bodyLeft-2,ty-4),(bodyLeft-2,ty+4),(0,ty+13)],tail,K,1)
-    poly(d,[(bodyLeft,ty),(2,ty-9),(bodyLeft-3,ty),(2,ty+9)],tailShadow,None)
-    poly(d,[(bodyLeft-1,ty-2),(bodyLeft-4,ty),(bodyLeft-1,ty+2)],tailShadow,None)
+    poly(d,[(bodyLeft,ty-2),(2,ty-10),(0,ty-6),(0,ty+6),(2,ty+10),(bodyLeft,ty+2)],tail,K,1)
+    poly(d,[(bodyLeft,ty),(4,ty-6),(4,ty+6)],tailShadow,None)
     # dorsal fin behind body (drawn first, larger)
     poly(d,[(W*0.26, H*0.18),(W*0.50, -2),(W*0.74, H*0.18)],fin,K,1)
     poly(d,[(W*0.28, H*0.18),(W*0.50, 0),(W*0.72, H*0.18)],finHi,None)

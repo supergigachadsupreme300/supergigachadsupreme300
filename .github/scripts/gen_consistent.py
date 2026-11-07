@@ -93,11 +93,12 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
     poly(d,[(bodyLeft,ty-2),(2,ty-10),(0,ty-6),(0,ty+6),(2,ty+10),(bodyLeft,ty+2)],tail,K,1)
     pass
     # dorsal fin behind body (smooth gentle arch, no pointy sides)
-    poly(d,[(W*0.28,H*0.16),(W*0.34,H*0.08),(W*0.44,H*0.04),(W*0.50,H*0.03),(W*0.56,H*0.04),(W*0.66,H*0.08),(W*0.72,H*0.16)],fin,K,1)
-    poly(d,[(W*0.30,H*0.16),(W*0.36,H*0.10),(W*0.44,H*0.06),(W*0.50,H*0.05),(W*0.56,H*0.06),(W*0.64,H*0.10),(W*0.70,H*0.16)],finHi,None)
-    # anal fin behind body (smooth gentle arch)
-    poly(d,[(W*0.28,H*0.84),(W*0.34,H*0.92),(W*0.44,H*0.96),(W*0.50,H*0.97),(W*0.56,H*0.96),(W*0.66,H*0.92),(W*0.72,H*0.84)],fin,K,1)
-    poly(d,[(W*0.30,H*0.84),(W*0.36,H*0.90),(W*0.44,H*0.94),(W*0.50,H*0.95),(W*0.56,H*0.94),(W*0.64,H*0.90),(W*0.70,H*0.84)],finHi,None)
+    # dorsal fin behind body (taller, closer to center)
+    poly(d,[(W*0.32,H*0.18),(W*0.36,H*0.02),(W*0.42,H*-0.04),(W*0.50,H*-0.06),(W*0.58,H*-0.04),(W*0.64,H*0.02),(W*0.68,H*0.18)],fin,K,1)
+    poly(d,[(W*0.34,H*0.18),(W*0.38,H*0.04),(W*0.44,H*-0.01),(W*0.50,H*-0.02),(W*0.56,H*-0.01),(W*0.62,H*0.04),(W*0.66,H*0.18)],finHi,None)
+    # anal fin behind body (taller, closer to center)
+    poly(d,[(W*0.32,H*0.82),(W*0.36,H*0.98),(W*0.42,H*1.04),(W*0.50,H*1.06),(W*0.58,H*1.04),(W*0.64,H*0.98),(W*0.68,H*0.82)],fin,K,1)
+    poly(d,[(W*0.34,H*0.82),(W*0.38,H*0.96),(W*0.44,H*1.01),(W*0.50,H*1.02),(W*0.56,H*1.01),(W*0.62,H*0.96),(W*0.66,H*0.82)],finHi,None)
     # body oval on top
     smooth(d, W*0.52, H*0.5, W*0.34, H*0.38, body, K)
     smooth(d, W*0.52, H*0.62, W*0.30, H*0.22, shadow, None)

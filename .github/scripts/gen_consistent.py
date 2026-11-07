@@ -106,10 +106,10 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
     smooth(d, W*0.52, H*0.5, W*0.34, H*0.38, body, K)
     smooth(d, W*0.52, H*0.62, W*0.30, H*0.22, shadow, None)
     smooth(d, W*0.42, H*0.38, W*0.22, H*0.18, highlight, None)
+    # pattern (on body, below pectoral fin)
+    if pattern: pattern(d, W, H)
     # pectoral fin on top
     poly(d,[(W*0.44,H*0.55),(W*0.50,H*0.55),(W*0.58,H*0.72),(W*0.34,H*0.72)],fin,K,1)
-    # pattern
-    if pattern: pattern(d, W, H)
     # eye (smaller, white sclera)
     ex, ey = int(W*0.78), int(H*0.38)
     ell(d, ex-3, ey-3, ex+3, ey+3, (255,255,255,255), K, 1)

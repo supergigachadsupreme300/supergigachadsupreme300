@@ -6,564 +6,527 @@ os.makedirs(OUT, exist_ok=True)
 
 def new(w, h):
     return Image.new("RGBA", (w, h), (0,0,0,0))
-
 def save(img, name):
     img.save(os.path.join(OUT, name), "PNG")
     print("saved", name)
 
-K = (20,20,20,255)
-def ell(d, x0,y0,x1,y1, fill, outline=K, w=1):
-    d.ellipse((x0,y0,x1,y1), fill=fill, outline=outline, width=w)
-def rect(d, x0,y0,x1,y1, fill, outline=K, w=1):
-    d.rectangle((x0,y0,x1,y1), fill=fill, outline=outline, width=w)
-def poly(d, pts, fill, outline=K, w=1):
-    d.polygon(pts, fill=fill, outline=outline, width=w)
-def line(d, x0,y0,x1,y1, fill, w=1):
-    d.line((x0,y0,x1,y1), fill=fill, width=w)
+K = (18,18,24,255)
+def ell(d,x0,y0,x1,y1,fill,outline=K,w=1): d.ellipse((x0,y0,x1,y1),fill=fill,outline=outline,width=w)
+def rect(d,x0,y0,x1,y1,fill,outline=K,w=1): d.rectangle((x0,y0,x1,y1),fill=fill,outline=outline,width=w)
+def poly(d,pts,fill,outline=K,w=1): d.polygon(pts,fill=fill,outline=outline,width=w)
+def line(d,x0,y0,x1,y1,fill,w=1): d.line((x0,y0,x1,y1),fill=fill,width=w)
+def smooth_body(d, cx, cy, rx, ry, fill, outline=K, steps=24):
+    # organic body via polygon with slight waviness
+    pts=[]
+    for i in range(steps):
+        a=2*math.pi*i/steps
+        rrx=rx*(1+0.04*math.sin(3*a))
+        rry=ry*(1+0.03*math.cos(2*a))
+        pts.append((cx+math.cos(a)*rrx, cy+math.sin(a)*rry))
+    poly(d, pts, fill, outline, 1)
 
-# ---------- Clownfish (80x40) ----------
+# ---------- Clownfish ----------
 def clownfish(tail_up=False):
-    img = new(80, 40)
-    d = ImageDraw.Draw(img)
-    O=(255,112,67,255); D=(190,60,30,255); W=(255,255,255,255); Bk=(20,20,20,255)
-    Y=(255,193,7,255); L=(255,171,145,255)
-    ty = 18 if not tail_up else 12
-    # tail (forked, left)
-    poly(d, [(6,ty),(0,ty-8),(2,ty),(0,ty+8)], O, Bk, 1)
-    poly(d, [(6,ty),(2,ty-4),(4,ty),(2,ty+4)], D, None)
-    # body (oval)
-    ell(d, 8,6,62,34, O, Bk, 1)
-    # shadow lower half
-    ell(d, 10,22,60,34, D, None)
+    img=new(96,48); d=ImageDraw.Draw(img)
+    O=(255,112,67,255); D=(185,55,25,255); W=(255,255,255,255); Bk=(18,18,24,255)
+    Y=(255,193,7,255); L=(255,175,145,255); S=(210,80,40,255)
+    ty=22 if not tail_up else 16
+    # tail
+    poly(d,[(8,ty),(0,ty-9),(3,ty),(0,ty+9)],O,Bk,1)
+    poly(d,[(8,ty),(3,ty-5),(5,ty),(3,ty+5)],D,None)
+    # body
+    smooth_body(d,46,24,34,15,O,Bk,32)
+    # shadow lower
+    smooth_body(d,46,28,30,10,D,None,32)
     # highlight
-    ell(d, 12,8,40,18, L, None)
-    # white bands with black edges
-    rect(d, 22,7,28,33, W, Bk, 1)
-    rect(d, 40,7,46,33, W, Bk, 1)
-    # dark separators inside bands
-    rect(d, 24,7,26,33, (200,200,200,255), None)
+    smooth_body(d,40,16,22,8,L,None,24)
+    # white bands with dark edges
+    for bx in (26,46):
+        rect(d,bx,8,bx+7,40,W,Bk,1)
+        rect(d,bx+2,8,bx+5,40,(230,230,230,255),None)
     # dorsal fin
-    poly(d, [(24,6),(36,0),(48,6)], Y, Bk, 1)
-    poly(d, [(26,6),(36,2),(46,6)], (255,224,130,255), None)
-    # pectoral fin
-    poly(d, [(34,24),(28,32),(40,32)], Y, Bk, 1)
-    # anal fin
-    poly(d, [(34,34),(28,38),(40,38)], Y, Bk, 1)
+    poly(d,[(28,7),(42,0),(56,7)],Y,Bk,1)
+    poly(d,[(30,7),(42,2),(54,7)],(255,224,130,255),None)
+    # pectoral
+    poly(d,[(40,26),(32,36),(48,36)],Y,Bk,1)
+    # anal
+    poly(d,[(40,40),(32,46),(48,46)],Y,Bk,1)
     # eye
-    ell(d, 52,12,58,18, (255,255,255,255), Bk, 1)
-    ell(d, 53,13,57,17, (20,20,20,255), None)
-    ell(d, 54,13,56,15, (255,255,255,255), None)
+    ell(d,64,14,72,22,(255,255,255,255),Bk,1)
+    ell(d,65,15,71,21,(20,20,20,255),None)
+    ell(d,66,15,69,18,(255,255,255,255),None)
     # mouth
-    line(d, 60,19,62,20, Bk, 1)
-    # scales texture (subtle)
-    for i in range(0,5):
-        for j in range(0,3):
-            d.point((18+i*6, 12+j*6), fill=(200,90,50,120))
+    line(d,74,22,76,23,Bk,1)
+    # scales
+    for i in range(6):
+        for j in range(3):
+            d.point((22+i*6,14+j*7),fill=S)
     return img
 
 # ---------- Blue Tang ----------
 def bluetang(tail_up=False):
-    img = new(80, 40)
-    d = ImageDraw.Draw(img)
-    B=(30,136,229,255); D=(13,71,161,255); Y=(255,235,59,255); Bk=(20,20,20,255)
-    L=(100,181,246,255)
-    ty = 19 if not tail_up else 13
-    poly(d, [(6,ty),(0,ty-9),(2,ty),(0,ty+9)], Y, Bk, 1)
-    ell(d, 8,5,64,35, B, Bk, 1)
-    ell(d, 10,24,62,35, D, None)
-    ell(d, 12,7,46,20, L, None)
-    # yellow tail base patch
-    ell(d, 8,14,16,26, Y, Bk, 1)
+    img=new(96,48); d=ImageDraw.Draw(img)
+    B=(30,136,229,255); D=(13,71,161,255); Y=(255,235,59,255); Bk=(18,18,24,255)
+    L=(100,181,246,255); S=(20,90,180,255)
+    ty=23 if not tail_up else 17
+    poly(d,[(8,ty),(0,ty-10),(3,ty),(0,ty+10)],Y,Bk,1)
+    poly(d,[(8,ty),(3,ty-6),(5,ty),(3,ty+6)],(200,200,50,255),None)
+    smooth_body(d,48,24,36,16,B,Bk,36)
+    smooth_body(d,48,28,32,11,D,None,36)
+    smooth_body(d,40,16,24,9,L,None,28)
+    # yellow tail base
+    ell(d,8,16,18,30,Y,Bk,1)
     # dorsal fin
-    poly(d, [(20,5),(38,0),(56,5)], D, Bk, 1)
+    poly(d,[(22,6),(42,0),(60,6)],D,Bk,1)
+    poly(d,[(24,6),(42,2),(58,6)],B,None)
     # anal fin
-    poly(d, [(20,35),(38,40),(56,35)], D, Bk, 1)
+    poly(d,[(22,42),(42,48),(60,42)],D,Bk,1)
     # pectoral
-    poly(d, [(36,26),(30,32),(42,32)], D, Bk, 1)
+    poly(d,[(42,28),(34,36),(50,36)],D,Bk,1)
     # eye
-    ell(d, 54,13,60,19, (255,255,255,255), Bk, 1)
-    ell(d, 55,14,59,18, Bk, None)
-    ell(d, 56,14,58,16, (255,255,255,255), None)
-    line(d, 62,18,64,19, Bk, 1)
+    ell(d,66,14,74,22,(255,255,255,255),Bk,1)
+    ell(d,67,15,73,21,Bk,None)
+    ell(d,68,15,71,18,(255,255,255,255),None)
+    line(d,76,20,78,21,Bk,1)
+    for i in range(5):
+        d.point((24+i*7,16+(i%2)*4),fill=S)
     return img
 
-# ---------- Angelfish (tall) ----------
+# ---------- Angelfish ----------
 def angelfish(tail_up=False):
-    img = new(70, 60)
-    d = ImageDraw.Draw(img)
-    P=(244,143,177,255); D=(194,24,91,255); Y=(255,235,59,255); Bk=(20,20,20,255)
+    img=new(80,80); d=ImageDraw.Draw(img)
+    P=(244,143,177,255); D=(194,24,91,255); Y=(255,235,59,255); Bk=(18,18,24,255)
     L=(248,187,208,255)
-    ty = 28 if not tail_up else 22
-    poly(d, [(4,ty),(0,ty-5),(0,ty+5)], D, Bk, 1)
-    ell(d, 6,6,52,54, P, Bk, 1)
-    ell(d, 8,36,50,54, D, None)
-    ell(d, 10,8,36,26, L, None)
-    # vertical stripes
-    rect(d, 18,6,22,54, D, Bk, 1)
-    rect(d, 32,6,36,54, D, Bk, 1)
-    # long dorsal fin
-    poly(d, [(10,6),(28,0),(46,6)], D, Bk, 1)
-    poly(d, [(12,6),(28,2),(44,6)], P, None)
+    ty=36 if not tail_up else 28
+    poly(d,[(6,ty),(0,ty-6),(0,ty+6)],D,Bk,1)
+    smooth_body(d,40,40,26,30,P,Bk,40)
+    smooth_body(d,40,52,24,14,D,None,40)
+    smooth_body(d,34,24,16,12,L,None,32)
+    # stripes
+    poly(d,[(18,10),(22,10),(22,70),(18,70)],D,Bk,1)
+    poly(d,[(34,10),(38,10),(38,70),(34,70)],D,Bk,1)
+    # long dorsal
+    poly(d,[(12,10),(32,0),(52,10)],D,Bk,1)
+    poly(d,[(14,10),(32,3),(50,10)],P,None)
     # anal fin
-    poly(d, [(10,54),(28,60),(46,54)], D, Bk, 1)
+    poly(d,[(12,70),(32,80),(52,70)],D,Bk,1)
     # pectoral
-    poly(d, [(30,30),(22,40),(38,40)], (255,200,220,255), Bk, 1)
+    poly(d,[(30,44),(20,56),(40,56)],(255,200,220,255),Bk,1)
     # eye
-    ell(d, 40,18,46,24, (255,255,255,255), Bk, 1)
-    ell(d, 41,19,45,23, Bk, None)
-    ell(d, 42,19,44,21, (255,255,255,255), None)
-    line(d, 48,24,50,25, Bk, 1)
+    ell(d,52,24,60,32,(255,255,255,255),Bk,1)
+    ell(d,53,25,59,31,Bk,None)
+    ell(d,54,25,57,28,(255,255,255,255),None)
+    line(d,58,30,60,31,Bk,1)
     return img
 
-# ---------- Butterflyfish (flat round) ----------
+# ---------- Butterflyfish ----------
 def butterflyfish(tail_up=False):
-    img = new(70, 40)
-    d = ImageDraw.Draw(img)
-    Y=(255,235,59,255); D=(249,168,37,255); B=(26,35,126,255); Bk=(20,20,20,255)
+    img=new(80,48); d=ImageDraw.Draw(img)
+    Y=(255,235,59,255); D=(249,168,37,255); B=(26,35,126,255); Bk=(18,18,24,255)
     O=(255,143,0,255); L=(255,249,196,255)
-    ty = 18 if not tail_up else 14
-    poly(d, [(4,ty),(0,ty-4),(0,ty+4)], O, Bk, 1)
-    ell(d, 6,6,52,34, Y, Bk, 1)
-    ell(d, 8,20,50,34, D, None)
-    ell(d, 10,8,36,22, L, None)
+    ty=22 if not tail_up else 17
+    poly(d,[(6,ty),(0,ty-5),(0,ty+5)],O,Bk,1)
+    smooth_body(d,40,24,30,16,Y,Bk,36)
+    smooth_body(d,40,28,28,10,D,None,36)
+    smooth_body(d,32,16,20,9,L,None,28)
     # eye spot
-    ell(d, 12,12,20,20, B, Bk, 1)
-    ell(d, 14,14,18,18, Bk, None)
-    ell(d, 15,14,17,16, (255,255,255,255), None)
+    ell(d,14,14,24,24,B,Bk,1)
+    ell(d,16,16,22,22,Bk,None)
+    ell(d,17,16,21,20,(255,255,255,255),None)
     # vertical bar
-    rect(d, 34,7,38,33, B, Bk, 1)
+    poly(d,[(40,8),(46,8),(46,40),(40,40)],B,Bk,1)
     # dorsal fin
-    poly(d, [(14,6),(26,0),(38,6)], O, Bk, 1)
-    poly(d, [(16,6),(26,2),(36,6)], Y, None)
+    poly(d,[(18,7),(32,0),(46,7)],O,Bk,1)
+    poly(d,[(20,7),(32,2),(44,7)],Y,None)
     # eye
-    ell(d, 42,12,48,18, (255,255,255,255), Bk, 1)
-    ell(d, 43,13,47,17, Bk, None)
-    ell(d, 44,13,46,15, (255,255,255,255), None)
-    line(d, 50,17,52,18, Bk, 1)
+    ell(d,52,14,60,22,(255,255,255,255),Bk,1)
+    ell(d,53,15,59,21,Bk,None)
+    ell(d,54,15,57,18,(255,255,255,255),None)
+    line(d,62,20,64,21,Bk,1)
     return img
 
 # ---------- Pufferfish ----------
 def pufferfish(tail_up=False):
-    img = new(60, 48)
-    d = ImageDraw.Draw(img)
-    Y=(255,245,157,255); D=(192,202,51,255); P=(244,143,177,255)
-    Bk=(20,20,20,255); W=(255,255,255,255); G=(93,64,55,255)
-    r=18; cx,cy=28,24
-    ell(d, cx-r, cy-r, cx+r, cy+r, Y, Bk, 1)
-    ell(d, cx-r+3, cy+4, cx+r-3, cy+r, D, None)
-    ell(d, cx-r+4, cy-r+4, cx-2, cy, (255,255,230,255), None)
+    img=new(72,60); d=ImageDraw.Draw(img)
+    Y=(255,245,157,255); D=(192,202,51,255); P=(244,143,177,255); Bk=(18,18,24,255)
+    W=(255,255,255,255); G=(93,64,55,255); L=(255,255,230,255)
+    cx,cy=34,30; r=22
+    # body (slightly oval)
+    smooth_body(d,cx,cy,r,r*0.9,Y,Bk,40)
+    smooth_body(d,cx,cy+4,r-3,r*0.7,D,None,40)
+    smooth_body(d,cx-4,cy-6,r*0.5,r*0.4,L,None,32)
     import math
-    for i in range(10):
-        a=math.radians(i*36)
-        x=cx+int(math.cos(a)*7); y=cy+int(math.sin(a)*7)
-        ell(d, x-3,y-3,x+3,y+3, P, None)
+    for i in range(12):
+        a=math.radians(i*30)
+        x=cx+int(math.cos(a)*8); y=cy+int(math.sin(a)*8)
+        ell(d,x-3,y-3,x+3,y+3,P,None)
     # spikes
-    for i in range(16):
-        a=math.radians(i*22.5)
+    for i in range(18):
+        a=math.radians(i*20)
         x1=cx+int(math.cos(a)*r); y1=cy+int(math.sin(a)*r)
-        x2=cx+int(math.cos(a)*(r+5)); y2=cy+int(math.sin(a)*(r+5))
-        line(d, x1,y1,x2,y2, G, 1)
+        x2=cx+int(math.cos(a)*(r+6)); y2=cy+int(math.sin(a)*(r+6))
+        line(d,x1,y1,x2,y2,G,1)
     # tail
-    ty = cy if not tail_up else cy-4
-    poly(d, [(cx-r,ty),(cx-r-8,ty-5),(cx-r-8,ty+5)], P, Bk, 1)
+    ty=cy if not tail_up else cy-5
+    poly(d,[(cx-r,ty),(cx-r-9,ty-6),(cx-r-9,ty+6)],P,Bk,1)
     # eye
-    ell(d, cx+6, cy-6, cx+14, cy+2, W, Bk, 1)
-    ell(d, cx+7, cy-5, cx+13, cy+1, Bk, None)
-    ell(d, cx+8, cy-5, cx+10, cy-3, W, None)
+    ell(d,cx+8,cy-8,cx+18,cy+2,W,Bk,1)
+    ell(d,cx+9,cy-7,cx+17,cy+1,Bk,None)
+    ell(d,cx+10,cy-7,cx+13,cy-4,W,None)
     # mouth
-    ell(d, cx+r-2, cy+1, cx+r+2, cy+4, G, None)
+    ell(d,cx+r-3,cy+2,cx+r+2,cy+6,G,None)
     return img
 
 # ---------- Lionfish ----------
 def lionfish(tail_up=False):
-    img = new(90, 44)
-    d = ImageDraw.Draw(img)
-    R=(229,57,53,255); D=(183,28,28,255); W=(255,255,255,255); Bk=(20,20,20,255)
+    img=new(100,52); d=ImageDraw.Draw(img)
+    R=(229,57,53,255); D=(183,28,28,255); W=(255,255,255,255); Bk=(18,18,24,255)
     Y=(255,202,40,255); O=(255,112,67,255); L=(255,138,128,255)
-    ty = 20 if not tail_up else 15
-    poly(d, [(6,ty),(0,ty-6),(2,ty),(0,ty+6)], D, Bk, 1)
-    ell(d, 10,8,62,36, R, Bk, 1)
-    ell(d, 12,24,60,36, D, None)
-    ell(d, 14,10,40,24, L, None)
+    ty=24 if not tail_up else 18
+    poly(d,[(8,ty),(0,ty-7),(3,ty),(0,ty+7)],D,Bk,1)
+    poly(d,[(8,ty),(3,ty-4),(5,ty),(3,ty+4)],R,None)
+    smooth_body(d,52,26,40,16,R,Bk,40)
+    smooth_body(d,52,32,36,11,D,None,40)
+    smooth_body(d,42,18,26,9,L,None,32)
     # stripes
-    for sx in [16,22,28,34,40,46,52]:
-        rect(d, sx,9,sx+3,35, W, Bk, 1)
-    # dramatic dorsal fins
-    for fx in range(14,58,6):
-        poly(d, [(fx,8),(fx+3,0),(fx+6,8)], Y, Bk, 1)
-        poly(d, [(fx+1,8),(fx+3,2),(fx+5,8)], (255,236,179,255), None)
+    for sx in [18,25,32,39,46,53,60]:
+        poly(d,[(sx,10),(sx+4,10),(sx+4,40),(sx,40)],W,Bk,1)
+    # dorsal fins (dramatic)
+    for fx in range(16,72,7):
+        poly(d,[(fx,10),(fx+3,0),(fx+7,10)],Y,Bk,1)
+        poly(d,[(fx+1,10),(fx+3,2),(fx+6,10)],(255,236,179,255),None)
     # pectoral fan
-    poly(d, [(30,26),(20,40),(40,40)], O, Bk, 1)
-    poly(d, [(32,26),(24,38),(36,38)], Y, None)
+    poly(d,[(36,30),(22,48),(50,48)],O,Bk,1)
+    poly(d,[(38,30),(26,46),(48,46)],Y,None)
     # anal fin
-    poly(d, [(30,36),(24,44),(36,44)], O, Bk, 1)
+    poly(d,[(36,42),(28,52),(44,52)],O,Bk,1)
     # eye
-    ell(d, 52,12,58,18, (255,255,255,255), Bk, 1)
-    ell(d, 53,13,57,17, Bk, None)
-    ell(d, 54,13,56,15, (255,255,255,255), None)
-    line(d, 60,17,62,18, Bk, 1)
+    ell(d,74,16,82,24,(255,255,255,255),Bk,1)
+    ell(d,75,17,81,23,Bk,None)
+    ell(d,76,17,79,20,(255,255,255,255),None)
+    line(d,84,22,86,23,Bk,1)
     return img
 
 # ---------- Moorish Idol ----------
 def moorishidol(tail_up=False):
-    img = new(88, 40)
-    d = ImageDraw.Draw(img)
-    B=(20,20,20,255); W=(255,255,255,255); Y=(255,193,7,255); Bk=(20,20,20,255)
+    img=new(96,44); d=ImageDraw.Draw(img)
+    B=(20,20,20,255); W=(255,255,255,255); Y=(255,193,7,255); Bk=(18,18,24,255)
     L=(240,240,240,255)
-    ty = 18 if not tail_up else 14
-    poly(d, [(4,ty),(0,ty-5),(0,ty+5)], Y, Bk, 1)
-    ell(d, 8,6,52,32, W, Bk, 1)
-    ell(d, 10,20,50,32, (220,220,220,255), None)
+    ty=20 if not tail_up else 15
+    poly(d,[(6,ty),(0,ty-6),(0,ty+6)],Y,Bk,1)
+    smooth_body(d,44,22,34,16,W,Bk,40)
+    smooth_body(d,44,28,32,10,(225,225,225,255),None,40)
     # black bands
-    rect(d, 14,6,20,32, B, Bk, 1)
-    rect(d, 26,6,32,32, B, Bk, 1)
+    poly(d,[(18,6),(26,6),(26,38),(18,38)],B,Bk,1)
+    poly(d,[(34,6),(42,6),(42,38),(34,38)],B,Bk,1)
     # yellow dorsal (elongated)
-    poly(d, [(16,6),(22,0),(28,6)], Y, Bk, 1)
-    poly(d, [(28,6),(34,-4),(40,6)], Y, Bk, 1)
-    poly(d, [(40,6),(46,-2),(52,6)], Y, Bk, 1)
+    poly(d,[(20,6),(28,0),(36,6)],Y,Bk,1)
+    poly(d,[(36,6),(44,-5),(52,6)],Y,Bk,1)
+    poly(d,[(52,6),(60,-2),(68,6)],Y,Bk,1)
     # snout
-    rect(d, 52,13,68,17, W, Bk, 1)
-    rect(d, 52,14,68,16, B, None)
+    rect(d,68,16,88,20,W,Bk,1)
+    rect(d,68,17,88,19,B,None)
     # eye
-    ell(d, 40,10,46,16, (255,255,255,255), Bk, 1)
-    ell(d, 41,11,45,15, Bk, None)
-    ell(d, 42,11,44,13, (255,255,255,255), None)
-    # tail
-    poly(d, [(6,ty),(2,ty-3),(2,ty+3)], Y, Bk, 1)
+    ell(d,56,12,64,20,(255,255,255,255),Bk,1)
+    ell(d,57,13,63,19,Bk,None)
+    ell(d,58,13,61,16,(255,255,255,255),None)
     return img
 
 # ---------- Royal Gramma ----------
 def royalgramma(tail_up=False):
-    img = new(70, 36)
-    d = ImageDraw.Draw(img)
-    P=(123,31,162,255); Y=(255,213,79,255); D=(74,20,140,255); Bk=(20,20,20,255)
+    img=new(80,40); d=ImageDraw.Draw(img)
+    P=(123,31,162,255); Y=(255,213,79,255); D=(74,20,140,255); Bk=(18,18,24,255)
     L=(170,80,200,255)
-    ty = 16 if not tail_up else 12
-    poly(d, [(4,ty),(0,ty-5),(0,ty+5)], Y, Bk, 1)
-    ell(d, 6,4,56,32, P, Bk, 1)
+    ty=18 if not tail_up else 13
+    poly(d,[(6,ty),(0,ty-6),(0,ty+6)],Y,Bk,1)
+    smooth_body(d,42,20,32,14,P,Bk,36)
+    smooth_body(d,42,26,28,8,D,None,36)
+    smooth_body(d,32,14,20,7,L,None,28)
     # yellow rear half
-    for x in range(30,57):
-        for y in range(5,32):
-            if (x-42)**2/14**2 + (y-18)**2/13**2 <= 1:
-                d.point((x,y), fill=Y)
-    ell(d, 8,22,54,32, D, None)
-    ell(d, 10,6,30,18, L, None)
+    for x in range(46,70):
+        for y in range(6,34):
+            if (x-56)**2/12**2+(y-20)**2/13**2<=1:
+                d.point((x,y),fill=Y)
     # dorsal fin
-    poly(d, [(14,4),(28,0),(42,4)], D, Bk, 1)
+    poly(d,[(18,6),(34,0),(50,6)],D,Bk,1)
+    poly(d,[(20,6),(34,2),(48,6)],P,None)
     # pectoral
-    poly(d, [(26,22),(20,28),(32,28)], (180,100,200,255), Bk, 1)
+    poly(d,[(34,24),(26,32),(42,32)],(180,100,200,255),Bk,1)
     # eye
-    ell(d, 46,10,52,16, (255,255,255,255), Bk, 1)
-    ell(d, 47,11,51,15, Bk, None)
-    ell(d, 48,11,50,13, (255,255,255,255), None)
-    line(d, 54,15,56,16, Bk, 1)
+    ell(d,58,10,66,18,(255,255,255,255),Bk,1)
+    ell(d,59,11,65,17,Bk,None)
+    ell(d,60,11,63,14,(255,255,255,255),None)
+    line(d,68,16,70,17,Bk,1)
     return img
 
 # ---------- Koi ----------
 def koi(tail_up=False):
-    img = new(90, 36)
-    d = ImageDraw.Draw(img)
-    O=(255,138,101,255); D=(216,67,21,255); W=(255,255,255,255); Bk=(20,20,20,255)
+    img=new(100,44); d=ImageDraw.Draw(img)
+    O=(255,138,101,255); D=(216,67,21,255); W=(255,255,255,255); Bk=(18,18,24,255)
     R=(191,54,12,255); Y=(255,202,40,255); L=(255,171,145,255)
-    ty = 16 if not tail_up else 11
-    poly(d, [(6,ty),(0,ty-7),(3,ty),(0,ty+7)], R, Bk, 1)
-    poly(d, [(6,ty),(2,ty-4),(4,ty),(2,ty+4)], D, None)
-    ell(d, 10,4,72,32, O, Bk, 1)
-    ell(d, 12,22,70,32, D, None)
-    ell(d, 14,6,44,20, L, None)
+    ty=20 if not tail_up else 14
+    poly(d,[(8,ty),(0,ty-8),(4,ty),(0,ty+8)],R,Bk,1)
+    poly(d,[(8,ty),(4,ty-5),(6,ty),(4,ty+5)],D,None)
+    smooth_body(d,50,22,42,16,O,Bk,44)
+    smooth_body(d,50,28,38,10,D,None,44)
+    smooth_body(d,40,14,26,9,L,None,32)
     # white patches
-    ell(d, 20,8,32,20, W, Bk, 1)
-    ell(d, 50,10,62,22, W, Bk, 1)
-    # red patches
-    ell(d, 36,14,46,24, R, Bk, 1)
+    smooth_body(d,26,14,10,7,W,Bk,24)
+    smooth_body(d,60,16,9,7,W,Bk,24)
+    # red patch
+    smooth_body(d,44,20,8,6,R,Bk,24)
     # dorsal fin
-    poly(d, [(22,4),(36,0),(50,4)], R, Bk, 1)
+    poly(d,[(26,6),(42,0),(58,6)],R,Bk,1)
+    poly(d,[(28,6),(42,2),(56,6)],O,None)
     # pectoral
-    poly(d, [(40,24),(32,32),(48,32)], (255,180,160,255), Bk, 1)
+    poly(d,[(46,26),(36,36),(56,36)],(255,180,160,255),Bk,1)
     # eye
-    ell(d, 60,10,66,16, (255,255,255,255), Bk, 1)
-    ell(d, 61,11,65,15, Bk, None)
-    ell(d, 62,11,64,13, (255,255,255,255), None)
-    line(d, 68,15,70,16, Bk, 1)
+    ell(d,72,12,80,20,(255,255,255,255),Bk,1)
+    ell(d,73,13,79,19,Bk,None)
+    ell(d,74,13,77,16,(255,255,255,255),None)
+    line(d,82,18,84,19,Bk,1)
     return img
 
 # ---------- Goldfish ----------
 def goldfish(tail_up=False):
-    img = new(70, 36)
-    d = ImageDraw.Draw(img)
-    Y=(255,202,40,255); D=(249,168,37,255); W=(255,255,255,255); Bk=(20,20,20,255)
+    img=new(80,44); d=ImageDraw.Draw(img)
+    Y=(255,202,40,255); D=(249,168,37,255); W=(255,255,255,255); Bk=(18,18,24,255)
     R=(229,57,53,255); L=(255,236,179,255)
-    ty = 16 if not tail_up else 12
-    poly(d, [(4,ty),(0,ty-6),(2,ty),(0,ty+6)], R, Bk, 1)
-    poly(d, [(4,ty),(1,ty-3),(3,ty),(1,ty+3)], D, None)
-    ell(d, 8,4,58,32, Y, Bk, 1)
-    ell(d, 10,22,56,32, D, None)
-    ell(d, 12,6,38,20, L, None)
-    ell(d, 20,8,30,18, W, Bk, 1)
-    poly(d, [(18,4),(28,0),(38,4)], D, Bk, 1)
-    poly(d, [(18,4),(28,2),(38,4)], Y, None)
-    poly(d, [(26,24),(18,32),(34,32)], (255,224,130,255), Bk, 1)
-    ell(d, 46,10,52,16, (255,255,255,255), Bk, 1)
-    ell(d, 47,11,51,15, Bk, None)
-    ell(d, 48,11,50,13, (255,255,255,255), None)
-    line(d, 54,15,56,16, Bk, 1)
+    ty=20 if not tail_up else 14
+    poly(d,[(6,ty),(0,ty-7),(3,ty),(0,ty+7)],R,Bk,1)
+    poly(d,[(6,ty),(3,ty-4),(4,ty),(3,ty+4)],D,None)
+    smooth_body(d,42,22,32,16,Y,Bk,40)
+    smooth_body(d,42,28,28,10,D,None,40)
+    smooth_body(d,34,14,22,9,L,None,32)
+    smooth_body(d,26,14,8,6,W,Bk,24)
+    poly(d,[(20,6),(32,0),(44,6)],D,Bk,1)
+    poly(d,[(22,6),(32,2),(42,6)],Y,None)
+    poly(d,[(30,26),(20,36),(40,36)],(255,224,130,255),Bk,1)
+    ell(d,56,12,64,20,(255,255,255,255),Bk,1)
+    ell(d,57,13,63,19,Bk,None)
+    ell(d,58,13,61,16,(255,255,255,255),None)
+    line(d,66,18,68,19,Bk,1)
     return img
 
-# ---------- Tropical (green/pink) ----------
+# ---------- Tropical ----------
 def tropical(tail_up=False):
-    img = new(72, 34)
-    d = ImageDraw.Draw(img)
-    G=(0,230,118,255); D=(0,137,123,255); P=(255,64,129,255); Bk=(20,20,20,255)
+    img=new(80,40); d=ImageDraw.Draw(img)
+    G=(0,230,118,255); D=(0,137,123,255); P=(255,64,129,255); Bk=(18,18,24,255)
     W=(255,255,255,255); L=(100,255,180,255)
-    ty = 15 if not tail_up else 11
-    poly(d, [(4,ty),(0,ty-5),(0,ty+5)], P, Bk, 1)
-    ell(d, 6,4,56,30, G, Bk, 1)
-    ell(d, 8,20,54,30, D, None)
-    ell(d, 10,6,36,18, L, None)
-    for sx in [14,20,26,32,38,44]:
-        rect(d, sx,5,sx+3,29, P, Bk, 1)
-    poly(d, [(12,4),(18,0),(24,4)], P, Bk, 1)
-    ell(d, 46,8,52,14, W, Bk, 1)
-    ell(d, 47,9,51,13, Bk, None)
-    ell(d, 48,9,50,11, W, None)
-    line(d, 54,13,56,14, Bk, 1)
+    ty=18 if not tail_up else 13
+    poly(d,[(6,ty),(0,ty-6),(0,ty+6)],P,Bk,1)
+    smooth_body(d,40,20,32,14,G,Bk,36)
+    smooth_body(d,40,26,28,9,D,None,36)
+    smooth_body(d,32,13,22,8,L,None,28)
+    for sx in [16,22,28,34,40,46]:
+        poly(d,[(sx,6),(sx+4,6),(sx+4,34),(sx,34)],P,Bk,1)
+    poly(d,[(14,6),(20,0),(26,6)],P,Bk,1)
+    ell(d,52,8,60,16,W,Bk,1)
+    ell(d,53,9,59,15,Bk,None)
+    ell(d,54,9,57,12,W,None)
+    line(d,62,14,64,15,Bk,1)
     return img
 
-# ---------- Exotic (purple/cyan) ----------
+# ---------- Exotic ----------
 def exotic(tail_up=False):
-    img = new(80, 40)
-    d = ImageDraw.Draw(img)
-    V=(224,64,251,255); D=(123,31,162,255); C=(0,229,255,255); Bk=(20,20,20,255)
+    img=new(88,44); d=ImageDraw.Draw(img)
+    V=(224,64,251,255); D=(123,31,162,255); C=(0,229,255,255); Bk=(18,18,24,255)
     W=(255,255,255,255); L=(235,120,255,255)
-    ty = 18 if not tail_up else 13
-    poly(d, [(5,ty),(0,ty-6),(2,ty),(0,ty+6)], C, Bk, 1)
-    ell(d, 8,5,64,35, V, Bk, 1)
-    ell(d, 10,24,62,35, D, None)
-    ell(d, 12,7,40,22, L, None)
-    ell(d, 24,10,40,26, C, Bk, 1)
-    ell(d, 27,13,37,23, V, None)
-    poly(d, [(16,5),(24,0),(32,5)], C, Bk, 1)
-    poly(d, [(32,5),(40,-1),(48,5)], C, Bk, 1)
-    ell(d, 54,12,60,18, W, Bk, 1)
-    ell(d, 55,13,59,17, Bk, None)
-    ell(d, 56,13,58,15, W, None)
-    line(d, 62,17,64,18, Bk, 1)
+    ty=20 if not tail_up else 15
+    poly(d,[(7,ty),(0,ty-7),(3,ty),(0,ty+7)],C,Bk,1)
+    smooth_body(d,46,22,36,16,V,Bk,40)
+    smooth_body(d,46,28,32,10,D,None,40)
+    smooth_body(d,36,14,24,9,L,None,32)
+    smooth_body(d,26,16,10,7,C,Bk,24)
+    smooth_body(d,29,18,7,5,V,None,24)
+    poly(d,[(18,6),(26,0),(34,6)],C,Bk,1)
+    poly(d,[(34,6),(42,0),(50,6)],C,Bk,1)
+    ell(d,62,12,70,20,W,Bk,1)
+    ell(d,63,13,69,19,Bk,None)
+    ell(d,64,13,67,16,W,None)
+    line(d,72,18,74,19,Bk,1)
     return img
 
 # ---------- Small reef fish ----------
 def smallreef(tail_up=False):
-    img = new(48, 28)
-    d = ImageDraw.Draw(img)
-    C=(38,198,218,255); D=(0,131,143,255); Y=(255,238,88,255); Bk=(20,20,20,255)
+    img=new(56,32); d=ImageDraw.Draw(img)
+    C=(38,198,218,255); D=(0,131,143,255); Y=(255,238,88,255); Bk=(18,18,24,255)
     W=(255,255,255,255); L=(100,220,230,255)
-    ty = 13 if not tail_up else 9
-    poly(d, [(3,ty),(0,ty-4),(0,ty+4)], D, Bk, 1)
-    ell(d, 5,4,34,24, C, Bk, 1)
-    ell(d, 7,16,32,24, D, None)
-    ell(d, 8,5,22,14, L, None)
-    poly(d, [(10,4),(14,0),(18,4)], Y, Bk, 1)
-    ell(d, 26,8,32,14, W, Bk, 1)
-    ell(d, 27,9,31,13, Bk, None)
-    ell(d, 28,9,30,11, W, None)
-    line(d, 34,12,36,13, Bk, 1)
+    ty=14 if not tail_up else 10
+    poly(d,[(4,ty),(0,ty-5),(0,ty+5)],D,Bk,1)
+    smooth_body(d,28,16,22,11,C,Bk,32)
+    smooth_body(d,28,21,18,6,D,None,32)
+    smooth_body(d,22,11,14,6,L,None,24)
+    poly(d,[(12,5),(17,0),(22,5)],Y,Bk,1)
+    ell(d,36,8,44,16,W,Bk,1)
+    ell(d,37,9,43,15,Bk,None)
+    ell(d,38,9,41,12,W,None)
+    line(d,46,13,48,14,Bk,1)
     return img
 
 # ---------- Sea Turtle ----------
 def turtle(tail_up=False):
-    img = new(96, 60)
-    d = ImageDraw.Draw(img)
-    G=(46,125,50,255); D=(27,94,32,255); L=(102,187,106,255); Bk=(20,20,20,255)
-    Y=(255,241,118,255); Br=(139,69,19,255)
-    # shell
-    ell(d, 10,10,86,50, G, Bk, 2)
-    ell(d, 16,14,80,46, D, None)
+    img=new(108,68); d=ImageDraw.Draw(img)
+    G=(46,125,50,255); D=(27,94,32,255); L=(102,187,106,255); Bk=(18,18,24,255)
+    Y=(255,241,118,255)
+    smooth_body(d,54,34,46,26,G,Bk,48)
+    smooth_body(d,54,38,40,20,D,None,48)
+    smooth_body(d,40,22,24,14,L,None,36)
     # scutes
     for i in range(-3,4):
-        line(d, 48+i*8, 12, 48+i*8, 48, D, 1)
-    line(d, 14, 30, 82, 30, D, 1)
-    # highlight
-    ell(d, 18,14,44,28, L, None)
+        line(d,54+i*9,12,54+i*9,56,D,1)
+    line(d,14,34,94,34,D,1)
     # head
-    ell(d, 78,22,96,40, L, Bk, 1)
-    ell(d, 86,26,92,32, Bk, None)
-    ell(d, 87,26,91,30, (255,255,255,255), None)
+    smooth_body(d,92,34,14,10,L,Bk,24)
+    ell(d,96,30,104,38,Bk,None)
+    ell(d,97,30,101,34,(255,255,255,255),None)
     # flippers
-    poly(d, [(14,10),(4,2),(10,16)], L, Bk, 1)
-    poly(d, [(14,50),(4,58),(10,44)], L, Bk, 1)
-    poly(d, [(74,10),(84,2),(78,16)], L, Bk, 1)
-    poly(d, [(74,50),(84,58),(78,44)], L, Bk, 1)
+    poly(d,[(18,12),(6,4),(14,20)],L,Bk,1)
+    poly(d,[(18,56),(6,64),(14,48)],L,Bk,1)
+    poly(d,[(82,12),(92,4),(86,20)],L,Bk,1)
+    poly(d,[(82,56),(92,64),(86,48)],L,Bk,1)
     return img
 
-# ---------- Environment sprites (keep existing) ----------
+# ---------- Environment (keep existing, slightly refined) ----------
 def branching_coral():
-    img = new(80, 80)
-    d = ImageDraw.Draw(img)
-    R=(239,83,80,255); D=(183,28,28,255); K=(20,20,20,255); P=(255,138,101,255); L=(255,180,170,255)
-    poly(d, [(40,78),(24,40),(30,36)], R, K, 1)
-    poly(d, [(40,78),(56,40),(50,36)], R, K, 1)
-    poly(d, [(30,44),(18,22),(24,18)], D, K, 1)
-    poly(d, [(50,44),(62,22),(56,18)], D, K, 1)
-    poly(d, [(40,36),(36,8),(44,8)], P, K, 1)
-    poly(d, [(36,40),(32,28),(40,28)], L, None)
-    ell(d, 28,70,52,78, D, K, 1)
+    img=new(96,96); d=ImageDraw.Draw(img)
+    R=(239,83,80,255); D=(183,28,28,255); K=(18,18,24,255); P=(255,138,101,255); L=(255,180,170,255)
+    poly(d,[(48,94),(28,46),(36,42)],R,K,1); poly(d,[(48,94),(68,46),(60,42)],R,K,1)
+    poly(d,[(36,52),(20,26),(28,22)],D,K,1); poly(d,[(60,52),(76,26),(68,22)],D,K,1)
+    poly(d,[(48,42),(42,10),(54,10)],P,K,1)
+    poly(d,[(42,48),(36,32),(46,32)],L,None)
+    smooth_body(d,48,88,22,10,D,K,24)
     return img
-
 def brain_coral():
-    img = new(72, 56)
-    d = ImageDraw.Draw(img)
-    O=(255,138,101,255); D=(230,74,25,255); K=(20,20,20,255)
-    ell(d, 4,8,68,52, O, K, 1)
-    ell(d, 10,14,62,46, D, None)
+    img=new(84,64); d=ImageDraw.Draw(img)
+    O=(255,138,101,255); D=(230,74,25,255); K=(18,18,24,255)
+    smooth_body(d,42,32,38,26,O,K,40)
+    smooth_body(d,42,32,30,19,D,None,40)
     for i in range(6):
-        d.arc((10+i*3, 14+i*3, 62-i*3, 46-i*3), 0, 360, fill=K, width=1)
-    ell(d, 28,22,44,38, O, K, 1)
+        d.arc((10+i*3,10+i*3,74-i*3,54-i*3),0,360,fill=K,width=1)
+    smooth_body(d,42,32,12,9,O,K,24)
     return img
-
 def sea_fan():
-    img = new(80, 80)
-    d = ImageDraw.Draw(img)
-    P=(186,104,200,255); D=(123,31,162,255); K=(20,20,20,255); L=(206,147,216,255)
-    rect(d, 36,60,44,80, D, K, 1)
+    img=new(96,96); d=ImageDraw.Draw(img)
+    P=(186,104,200,255); D=(123,31,162,255); K=(18,18,24,255); L=(206,147,216,255)
+    rect(d,44,74,52,96,D,K,1)
     import math
-    for i in range(9):
-        a=(i-4)*0.3
-        x2=40+int(math.cos(-1.57+a)*36); y2=60+int(math.sin(-1.57+a)*36)
-        line(d, 40,60, x2,y2, P, 2)
-        # sub
-        for j in (0.4,-0.4):
-            xs=x2+int(math.cos(-1.57+a+j)*12); ys=y2+int(math.sin(-1.57+a+j)*12)
-            line(d, x2,y2,xs,ys, D, 1)
+    for i in range(11):
+        a=(i-5)*0.28
+        x2=48+int(math.cos(-1.57+a)*44); y2=74+int(math.sin(-1.57+a)*44)
+        line(d,48,74,x2,y2,P,2)
+        for j in (0.35,-0.35):
+            xs=x2+int(math.cos(-1.57+a+j)*14); ys=y2+int(math.sin(-1.57+a+j)*14)
+            line(d,x2,y2,xs,ys,D,1)
     return img
-
 def anemone():
-    img = new(72, 72)
-    d = ImageDraw.Draw(img)
-    P=(244,143,177,255); D=(194,24,91,255); K=(20,20,20,255); G=(129,199,132,255); L=(248,187,208,255)
-    ell(d, 20,56,52,72, G, K, 1)
+    img=new(84,84); d=ImageDraw.Draw(img)
+    P=(244,143,177,255); D=(194,24,91,255); K=(18,18,24,255); G=(129,199,132,255); L=(248,187,208,255)
+    smooth_body(d,42,70,20,10,G,K,24)
     import math
-    for i in range(12):
-        a=math.radians(i*30)
-        x=36+int(math.cos(a)*10); y=48+int(math.sin(a)*8)
-        line(d, 36,52, x, y-18, P, 2)
-        ell(d, x-3,y-22,x+3,y-16, P, K, 1)
-        ell(d, x-1,y-20,x+1,y-18, L, None)
+    for i in range(14):
+        a=math.radians(i*25.7)
+        x=42+int(math.cos(a)*12); y=56+int(math.sin(a)*8)
+        line(d,42,62,x,y-20,P,2)
+        smooth_body(d,x,y-18,4,6,P,K,12)
+        smooth_body(d,x-1,y-17,2,3,L,None,8)
     return img
-
 def seaweed():
-    img = new(32, 80)
-    d = ImageDraw.Draw(img)
-    G=(46,125,50,255); D=(27,94,32,255); K=(20,20,20,255); L=(102,187,106,255)
+    img=new(40,96); d=ImageDraw.Draw(img)
+    G=(46,125,50,255); D=(27,94,32,255); K=(18,18,24,255); L=(102,187,106,255)
     import math
-    for i in range(6):
-        x=6+i*4
+    for i in range(7):
+        x=6+i*5
         pts=[]
         xx=x
-        for y in range(80,0,-3):
-            xx=x+int(math.sin(y*0.12+i)*4)
+        for y in range(96,0,-3):
+            xx=x+int(math.sin(y*0.1+i)*5)
             pts.append((xx,y))
         for j in range(len(pts)-1):
-            line(d, pts[j][0],pts[j][1],pts[j+1][0],pts[j+1][1], G, 2)
-        # leaflets
-        for y in range(70,10,-12):
-            xx=x+int(math.sin(y*0.12+i)*4)
-            line(d, xx,y,xx+6,y-4, D, 1)
-            line(d, xx,y,xx-6,y-4, D, 1)
+            line(d,pts[j][0],pts[j][1],pts[j+1][0],pts[j+1][1],G,2)
+        for y in range(84,12,-14):
+            xx=x+int(math.sin(y*0.1+i)*5)
+            line(d,xx,y,xx+7,y-5,D,1)
+            line(d,xx,y,xx-7,y-5,D,1)
     return img
-
 def kelp():
-    img = new(40, 100)
-    d = ImageDraw.Draw(img)
-    G=(27,94,32,255); D=(13,60,18,255); K=(20,20,20,255); L=(102,187,106,255)
+    img=new(48,120); d=ImageDraw.Draw(img)
+    G=(27,94,32,255); D=(13,60,18,255); K=(18,18,24,255); L=(102,187,106,255)
     import math
     pts=[]
-    x=20
-    for y in range(100,0,-2):
-        x=20+int(math.sin(y*0.12)*5)
+    x=24
+    for y in range(120,0,-2):
+        x=24+int(math.sin(y*0.1)*6)
         pts.append((x,y))
     for j in range(len(pts)-1):
-        line(d, pts[j][0],pts[j][1],pts[j+1][0],pts[j+1][1], G, 4)
-    for y in range(90,10,-10):
-        x=20+int(math.sin(y*0.12)*5)
-        line(d, x,y,x+12,y-8, L, 2)
-        line(d, x,y,x-12,y-8, L, 2)
+        line(d,pts[j][0],pts[j][1],pts[j+1][0],pts[j+1][1],G,5)
+    for y in range(110,10,-12):
+        x=24+int(math.sin(y*0.1)*6)
+        line(d,x,y,x+14,y-10,L,2)
+        line(d,x,y,x-14,y-10,L,2)
     return img
-
 def rock():
-    img = new(80, 48)
-    d = ImageDraw.Draw(img)
-    G=(120,144,156,255); D=(84,110,122,255); L=(176,190,197,255); K=(20,20,20,255); S=(96,125,139,255)
-    poly(d, [(8,44),(16,12),(40,4),(72,12),(76,44),(40,48)], G, K, 1)
-    ell(d, 20,12,44,28, L, None)
-    ell(d, 50,16,68,30, D, None)
-    ell(d, 28,30,44,42, S, None)
-    for i in range(12):
-        d.point((12+i*5, 20+(i*3)%12), fill=D)
+    img=new(96,56); d=ImageDraw.Draw(img)
+    G=(120,144,156,255); D=(84,110,122,255); L=(176,190,197,255); K=(18,18,24,255); S=(96,125,139,255)
+    poly(d,[(10,50),(20,14),(44,6),(80,14),(88,50),(44,54)],G,K,1)
+    smooth_body(d,30,24,16,12,L,None,24)
+    smooth_body(d,62,26,14,10,D,None,24)
+    smooth_body(d,44,40,12,8,S,None,20)
+    for i in range(15):
+        d.point((14+i*5,20+(i*7)%16),fill=D)
     return img
-
 def shell():
-    img = new(40, 32)
-    d = ImageDraw.Draw(img)
-    P=(255,204,188,255); D=(255,138,101,255); K=(20,20,20,255); L=(255,224,204,255)
-    poly(d, [(4,28),(20,4),(36,28)], P, K, 1)
-    for i in range(7):
-        line(d, 20,4, 4+i*5, 28, D, 1)
-        line(d, 20,4, 36-i*5, 28, D, 1)
-    ell(d, 14,10,26,20, L, None)
+    img=new(48,36); d=ImageDraw.Draw(img)
+    P=(255,204,188,255); D=(255,138,101,255); K=(18,18,24,255); L=(255,224,204,255)
+    poly(d,[(6,32),(24,4),(42,32)],P,K,1)
+    for i in range(8):
+        line(d,24,4,6+i*5,32,D,1)
+        line(d,24,4,42-i*5,32,D,1)
+    smooth_body(d,24,20,8,7,L,None,16)
     return img
-
 def treasure():
-    img = new(88, 72)
-    d = ImageDraw.Draw(img)
-    B=(141,110,99,255); D=(93,64,55,255); G=(255,213,79,255); K=(20,20,20,255)
-    L=(180,140,120,255)
-    rect(d, 12,28,76,68, B, K, 1)
-    rect(d, 12,20,76,30, D, K, 1)
-    poly(d, [(12,28),(44,8),(76,28)], D, K, 1)
-    poly(d, [(14,28),(44,12),(74,28)], L, None)
-    rect(d, 36,32,52,44, G, K, 1)
+    img=new(104,84); d=ImageDraw.Draw(img)
+    B=(141,110,99,255); D=(93,64,55,255); G=(255,213,79,255); K=(18,18,24,255); L=(180,140,120,255)
+    rect(d,14,34,90,78,B,K,1)
+    rect(d,14,26,90,36,D,K,1)
+    poly(d,[(14,34),(52,10),(90,34)],D,K,1)
+    poly(d,[(16,34),(52,14),(88,34)],L,None)
+    rect(d,42,38,62,52,G,K,1)
     for i in range(5):
-        ell(d, 16+i*12, 4, 28+i*12, 16, G, K, 1)
+        smooth_body(d,20+i*16,8,8,6,G,K,16)
     return img
-
 def shipwreck():
-    img = new(120, 80)
-    d = ImageDraw.Draw(img)
-    B=(93,64,55,255); D=(62,39,35,255); G=(121,85,72,255); K=(20,20,20,255)
-    L=(140,100,80,255)
-    poly(d, [(8,68),(16,48),(104,48),(112,68)], B, K, 1)
-    rect(d, 16,40,104,50, D, K, 1)
-    rect(d, 56,4,64,48, G, K, 1)
-    poly(d, [(64,8),(88,16),(68,28)], (190,190,190,200), K, 1)
-    rect(d, 24,56,40,60, K, None)
-    rect(d, 80,56,96,60, K, None)
-    # broken planks
-    rect(d, 8,44,20,46, L, None)
-    rect(d, 90,42,108,44, L, None)
+    img=new(144,96); d=ImageDraw.Draw(img)
+    B=(93,64,55,255); D=(62,39,35,255); G=(121,85,72,255); K=(18,18,24,255); L=(140,100,80,255)
+    poly(d,[(10,82),(20,58),(124,58),(134,82)],B,K,1)
+    rect(d,20,48,124,60,D,K,1)
+    rect(d,68,6,78,58,G,K,1)
+    poly(d,[(78,10),(104,20),(80,34)],(190,190,190,200),K,1)
+    rect(d,30,68,46,72,K,None)
+    rect(d,94,66,112,70,K,None)
+    rect(d,10,54,24,56,L,None)
+    rect(d,110,52,130,54,L,None)
     return img
 
-# ---- Save all ----
-def saveall():
-    species = {
-        'clownfish': clownfish, 'bluetang': bluetang, 'angelfish': angelfish,
-        'butterflyfish': butterflyfish, 'pufferfish': pufferfish, 'lionfish': lionfish,
-        'moorishidol': moorishidol, 'royalgramma': royalgramma, 'koi': koi,
-        'goldfish': goldfish, 'tropical': tropical, 'exotic': exotic,
-        'smallreef': smallreef, 'turtle': turtle,
-    }
-    for name, fn in species.items():
-        save(fn(False), f"{name}_0.png")
-        save(fn(True), f"{name}_1.png")
-    # environment
-    save(branching_coral(), "coral_branching.png")
-    save(brain_coral(), "coral_brain.png")
-    save(sea_fan(), "coral_seafan.png")
-    save(anemone(), "anemone.png")
-    save(seaweed(), "seaweed.png")
-    save(kelp(), "kelp.png")
-    save(rock(), "rock.png")
-    save(shell(), "shell.png")
-    save(treasure(), "treasure.png")
-    save(shipwreck(), "shipwreck.png")
-
-saveall()
+# ---------- Save all ----------
+species = {
+    'clownfish': clownfish, 'bluetang': bluetang, 'angelfish': angelfish,
+    'butterflyfish': butterflyfish, 'pufferfish': pufferfish, 'lionfish': lionfish,
+    'moorishidol': moorishidol, 'royalgramma': royalgramma, 'koi': koi,
+    'goldfish': goldfish, 'tropical': tropical, 'exotic': exotic,
+    'smallreef': smallreef, 'turtle': turtle,
+}
+for name, fn in species.items():
+    save(fn(False), f"{name}_0.png")
+    save(fn(True), f"{name}_1.png")
+save(branching_coral(), "coral_branching.png")
+save(brain_coral(), "coral_brain.png")
+save(sea_fan(), "coral_seafan.png")
+save(anemone(), "anemone.png")
+save(seaweed(), "seaweed.png")
+save(kelp(), "kelp.png")
+save(rock(), "rock.png")
+save(shell(), "shell.png")
+save(treasure(), "treasure.png")
+save(shipwreck(), "shipwreck.png")
 print("ALL DONE")

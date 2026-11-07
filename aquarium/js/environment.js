@@ -128,7 +128,7 @@ export class Environment {
       const key = coralKeys[c.type % coralKeys.length];
       const img = getAsset(key, 0);
       if (img) {
-        const scale = 0.5;
+        const scale = 0.35;
         const iw = img.width * scale;
         const ih = img.height * scale;
         ctx.save();
@@ -145,7 +145,7 @@ export class Environment {
     for (const r of this.rocks) {
       const img = getAsset('rock', 0);
       if (img) {
-        const s = 0.5;
+        const s = 0.4;
         ctx.save();
         ctx.globalAlpha = 0.9;
         ctx.imageSmoothingEnabled = false;
@@ -161,7 +161,7 @@ export class Environment {
       const key = p.type === 'kelp' ? 'kelp' : 'seaweed';
       const img = getAsset(key, 0);
       if (img) {
-        const s = p.type === 'kelp' ? 0.5 : 0.45;
+        const s = p.type === 'kelp' ? 0.35 : 0.3;
         const sway = Math.sin(t * 1.1 + p.phase) * 3;
         ctx.save();
         ctx.globalAlpha = 0.9;
@@ -369,7 +369,7 @@ export class Environment {
 
   drawDecorItem(ctx, d, t) {
     const x = d.x, y = d.y;
-    const drawImg = (key, scale = 0.5, oy = 0) => {
+    const drawImg = (key, scale = 0.35, oy = 0) => {
       const img = getAsset(key, 0);
       if (!img) return false;
       ctx.save();

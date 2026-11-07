@@ -52,7 +52,7 @@ export class Fish {
     const img = (typeof getAsset === 'function') ? getAsset(assetKey, Math.floor(t * 4 + this.animPhase) % 2) : null;
     if (img) {
       const dir = this.vx >= 0 ? 1 : -1;
-      const scale = 0.5;
+      const scale = 0.4;
       const w = img.width * scale;
       const h = img.height * scale;
       ctx.save();

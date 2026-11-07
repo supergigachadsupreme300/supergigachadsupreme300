@@ -3,7 +3,8 @@ from PIL import Image, ImageDraw
 
 def bands_clown(d,W,H):
     for bx in (W*0.30, W*0.55):
-        rect(d, int(bx), 6, int(bx)+8, H-6, (255,255,255,255), (18,18,24,255), 1)
+        rect(d, int(bx), int(H*0.22), int(bx)+5, int(H*0.78), (255,255,255,255), (18,18,24,255), 1)
+        rect(d, int(bx)+1, int(H*0.22), int(bx)+4, int(H*0.78), (230,230,230,255), None)
 def stripes_vertical(d,W,H,color):
     for sx in (W*0.30, W*0.46, W*0.62):
         rect(d, int(sx), 6, int(sx)+3, H-6, color, (18,18,24,255), 1)
@@ -87,20 +88,21 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
               tail_up=False, pattern=None):
     img=new(W,H); d=ImageDraw.Draw(img)
     ty = H//2 + (-4 if tail_up else 0)
-    # tail (forked)
-    poly(d,[(8,ty),(0,ty-9),(3,ty),(0,ty+9)],tail,K,1)
-    poly(d,[(8,ty),(3,ty-5),(5,ty),(3,ty+5)],tailShadow,None)
+    bodyLeft = int(W*0.18)
+    # tail (forked) attached to body left edge
+    poly(d,[(bodyLeft,ty),(0,ty-10),(bodyLeft-2,ty),(0,ty+10)],tail,K,1)
+    poly(d,[(bodyLeft,ty),(bodyLeft-3,ty-6),(bodyLeft-1,ty),(bodyLeft-3,ty+6)],tailShadow,None)
     # body oval
     smooth(d, W*0.52, H*0.5, W*0.34, H*0.38, body, K)
     smooth(d, W*0.52, H*0.62, W*0.30, H*0.22, shadow, None)
     smooth(d, W*0.42, H*0.38, W*0.22, H*0.18, highlight, None)
-    # dorsal fin
-    poly(d,[(W*0.32,H*0.12),(W*0.52,0),(W*0.72,H*0.12)],fin,K,1)
-    poly(d,[(W*0.34,H*0.12),(W*0.52,2),(W*0.70,H*0.12)],finHi,None)
+    # dorsal fin (base along body top)
+    poly(d,[(W*0.30,H*0.14),(W*0.50,2),(W*0.70,H*0.14)],fin,K,1)
+    poly(d,[(W*0.32,H*0.14),(W*0.50,4),(W*0.68,H*0.14)],finHi,None)
     # anal fin
-    poly(d,[(W*0.32,H*0.88),(W*0.52,H),(W*0.72,H*0.88)],fin,K,1)
+    poly(d,[(W*0.30,H*0.86),(W*0.50,H-2),(W*0.70,H*0.86)],fin,K,1)
     # pectoral fin
-    poly(d,[(W*0.48,H*0.62),(W*0.38,H*0.78),(W*0.58,H*0.78)],fin,K,1)
+    poly(d,[(W*0.46,H*0.58),(W*0.36,H*0.74),(W*0.56,H*0.74)],fin,K,1)
     # pattern
     if pattern: pattern(d, W, H)
     # eye
@@ -115,7 +117,8 @@ def base_fish(W,H, body, shadow, highlight, tail, tailShadow, fin, finHi, eyeWhi
 # Pattern helpers
 def bands_clown(d,W,H):
     for bx in (W*0.30, W*0.55):
-        rect(d, int(bx), 6, int(bx)+8, H-6, (255,255,255,255), (18,18,24,255), 1)
+        rect(d, int(bx), int(H*0.22), int(bx)+5, int(H*0.78), (255,255,255,255), (18,18,24,255), 1)
+        rect(d, int(bx)+1, int(H*0.22), int(bx)+4, int(H*0.78), (230,230,230,255), None)
 def stripes_vertical(d,W,H,color):
     for sx in (W*0.30, W*0.46, W*0.62):
         rect(d, int(sx), 6, int(sx)+3, H-6, color, (18,18,24,255), 1)

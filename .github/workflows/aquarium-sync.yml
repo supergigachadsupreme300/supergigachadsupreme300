@@ -18,6 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm install playwright
+          npx playwright install chromium --with-deps
+
       - name: Sync GitHub contributions
         env:
           AQUARIUM_GITHUB_TOKEN: ${{ secrets.AQUARIUM_GITHUB_TOKEN }}
@@ -25,14 +35,32 @@ jobs:
         run: |
           node .github/scripts/aquarium-sync.js
 
+      - name: Start local server
+        run: |
+          python3 -m http.server 8765 &
+          echo $! > /tmp/server.pid
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:8765/ >/dev/null; then echo "server ready"; break; fi
+            sleep 1
+          done
+
+      - name: Capture aquarium preview GIF
+        run: |
+          node .github/scripts/capture-preview.js
+
+      - name: Stop local server
+        if: always()
+        run: |
+          if [ -f /tmp/server.pid ]; then kill $(cat /tmp/server.pid) || true; fi
+
       - name: Commit changes if any
         run: |
-          git add aquarium/aquarium-state.json README.md
+          git add aquarium/aquarium-state.json aquarium/aquarium-preview.gif README.md
           if git diff --cached --quiet; then
             echo "No changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "aquarium: sync contribution data"
+          git commit -m "aquarium: sync contribution data and preview"
           git push

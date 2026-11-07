@@ -9,6 +9,8 @@ A cozy, interactive pixel-art aquarium driven by your lifetime GitHub contributi
 **Ecosystem level:** 5 - Thriving Ecosystem
 <!-- AQUARIUM:END -->
 
+![Aquarium preview](aquarium/aquarium-preview.gif)
+
 **[▶ Play the Aquarium](https://supergigachadsupreme300.github.io/supergigachadsupreme300/)**
 
 ### Features

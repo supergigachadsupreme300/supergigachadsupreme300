@@ -67,56 +67,7 @@ export class Environment {
     }
     ctx.restore();
 
-    // Horizontal currents
-    ctx.save();
-    ctx.globalAlpha = 0.12;
-    ctx.strokeStyle = '#b3e5fc';
-    ctx.lineWidth = 1;
-    for (const c of this.currents) {
-      const y = c.y * h;
-      ctx.beginPath();
-      for (let x = 0; x < w; x += 4) {
-        const yy = y + Math.sin(x * 0.02 + t * c.speed + c.phase) * 3;
-        if (x === 0) ctx.moveTo(x, yy);
-        else ctx.lineTo(x, yy);
-      }
-      ctx.stroke();
-    }
-    ctx.restore();
-
-    // Sunlight rays
-    ctx.save();
-    for (const r of this.rays) {
-      const sway = Math.sin(t * r.speed + r.phase) * 0.025;
-      const x = (r.x + sway) * w;
-      const rw = r.width * w;
-      const rayGrad = ctx.createLinearGradient(x, 0, x + rw * 0.5, h * 0.8);
-      rayGrad.addColorStop(0, 'rgba(255,255,220,0.35)');
-      rayGrad.addColorStop(0.5, 'rgba(255,255,220,0.12)');
-      rayGrad.addColorStop(1, 'rgba(255,255,220,0)');
-      ctx.fillStyle = rayGrad;
-      ctx.beginPath();
-      ctx.moveTo(x - rw * 0.4, 0);
-      ctx.lineTo(x + rw * 0.4, 0);
-      ctx.lineTo(x + rw * 1.6, h * 0.85);
-      ctx.lineTo(x - rw * 1.6, h * 0.85);
-      ctx.closePath();
-      ctx.fill();
-    }
-    ctx.restore();
-
-    // Caustics on seabed
-    ctx.save();
-    ctx.globalAlpha = 0.15;
-    for (let i = 0; i < 8; i++) {
-      const cx = (0.1 + i * 0.12) * w + Math.sin(t * 0.8 + i) * 10;
-      const cy = seabedY - 5 + Math.cos(t * 0.6 + i * 1.3) * 3;
-      ctx.fillStyle = '#b3e5fc';
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, 18, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.restore();
+    // (lighting effects removed per user request)
 
     // Midground coral sprites
     const coralKeys = ['coral_branching','coral_brain','coral_seafan','anemone'];

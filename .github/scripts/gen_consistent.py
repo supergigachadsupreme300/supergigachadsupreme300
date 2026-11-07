@@ -271,10 +271,16 @@ def crab(tail_up=False):
     ell(d, 19, 5, 21, 7, (20,20,24,255), None)
     ell(d, 43, 5, 45, 7, (20,20,24,255), None)
     claw_y = 22 if not tail_up else 18
-    poly(d, [(10,20),(0,claw_y-6),(0,claw_y+6)], R, K, 1)
-    poly(d, [(10,20),(2,claw_y-4),(2,claw_y+4)], L, None)
-    poly(d, [(54,20),(64,claw_y-6),(64,claw_y+6)], R, K, 1)
-    poly(d, [(54,20),(62,claw_y-4),(62,claw_y+4)], L, None)
+    # left pincer claw
+    poly(d, [(12,18),(4,claw_y-3),(4,claw_y+3)], R, K, 1)
+    poly(d, [(12,18),(6,claw_y-1),(6,claw_y+1)], L, None)
+    poly(d, [(4,claw_y-3),(0,claw_y-6),(0,claw_y-2)], R, K, 1)
+    poly(d, [(4,claw_y+3),(0,claw_y+6),(0,claw_y+2)], R, K, 1)
+    # right pincer claw
+    poly(d, [(52,18),(60,claw_y-3),(60,claw_y+3)], R, K, 1)
+    poly(d, [(52,18),(58,claw_y-1),(58,claw_y+1)], L, None)
+    poly(d, [(60,claw_y-3),(64,claw_y-6),(64,claw_y-2)], R, K, 1)
+    poly(d, [(60,claw_y+3),(64,claw_y+6),(64,claw_y+2)], R, K, 1)
     for i in range(4):
         x = 18 + i*10
         line(d, x, 28, x-2, 36, Dc, 2)
